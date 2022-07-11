@@ -1,4 +1,4 @@
-'use strict';
+
 
 const {
   es5Paths,
@@ -27,7 +27,7 @@ module.exports = {
   parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 9,
-    sourceType: 'script',
+    sourceType: 'module',
   },
 
   // We're stricter than the default config, mostly. We'll override a few rules
@@ -61,13 +61,13 @@ module.exports = {
     'valid-typeof': [ERROR, {requireStringLiterals: true}],
     // Flow fails with with non-string literal keys
     'no-useless-computed-key': OFF,
+    'strict': OFF,
 
     // We apply these settings to files that should run on Node.
     // They can't use JSX or ES6 modules, and must be in strict mode.
     // They can, however, use other ES6 features.
     // (Note these rules are overridden later for source files.)
     'no-var': ERROR,
-    strict: ERROR,
 
     // Enforced by Prettier
     // TODO: Prettier doesn't handle long strings or long comments. Not a big
@@ -165,7 +165,7 @@ module.exports = {
       parser: 'espree',
       parserOptions: {
         ecmaVersion: 5,
-        sourceType: 'script',
+        sourceType: 'module',
       },
       rules: {
         'no-var': OFF,
