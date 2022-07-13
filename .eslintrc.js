@@ -39,7 +39,7 @@ module.exports = {
     'dot-location': [ERROR, 'property'],
     // We use console['error']() as a signal to not transform it:
     'dot-notation': [ERROR, {allowPattern: '^(error|warn)$'}],
-    'eol-last': ERROR,
+    'eol-last': OFF,
     eqeqeq: [ERROR, 'allow-null'],
     indent: OFF,
     'jsx-quotes': [ERROR, 'prefer-double'],
