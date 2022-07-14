@@ -6,119 +6,61 @@
  *
  *      
  */
-
-                                                               
-                                                                       
-                                                                              
-                                                          
-import {enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay} from 'shared/ReactFeatureFlags';
-import {
-  isDiscreteEventThatRequiresHydration,
-  queueDiscreteEvent,
-  hasQueuedDiscreteEvents,
-  clearIfContinuousEvent,
-  queueIfContinuousEvent,
-  attemptSynchronousHydration,
-} from './ReactDOMEventReplaying';
-import {
-  getNearestMountedFiber,
-  getContainerFromFiber,
-  getSuspenseInstanceFromFiber,
-} from 'react-reconciler/src/ReactFiberTreeReflection';
-import {HostRoot, SuspenseComponent} from 'react-reconciler/src/ReactWorkTags';
-import {                       IS_CAPTURE_PHASE} from './EventSystemFlags';
-
+import { enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay } from 'shared/ReactFeatureFlags';
+import { isDiscreteEventThatRequiresHydration, queueDiscreteEvent, hasQueuedDiscreteEvents, clearIfContinuousEvent, queueIfContinuousEvent, attemptSynchronousHydration } from './ReactDOMEventReplaying';
+import { getNearestMountedFiber, getContainerFromFiber, getSuspenseInstanceFromFiber } from 'react-reconciler/src/ReactFiberTreeReflection';
+import { HostRoot, SuspenseComponent } from 'react-reconciler/src/ReactWorkTags';
+import { IS_CAPTURE_PHASE } from './EventSystemFlags';
 import getEventTarget from './getEventTarget';
-import {
-  getInstanceFromNode,
-  getClosestInstanceFromNode,
-} from '../client/ReactDOMComponentTree';
-
-import {dispatchEventForPluginEventSystem} from './DOMPluginEventSystem';
-
-import {
-  getCurrentPriorityLevel as getCurrentSchedulerPriorityLevel,
-  IdlePriority as IdleSchedulerPriority,
-  ImmediatePriority as ImmediateSchedulerPriority,
-  LowPriority as LowSchedulerPriority,
-  NormalPriority as NormalSchedulerPriority,
-  UserBlockingPriority as UserBlockingSchedulerPriority,
-} from 'react-reconciler/src/Scheduler';
-import {
-  DiscreteEventPriority,
-  ContinuousEventPriority,
-  DefaultEventPriority,
-  IdleEventPriority,
-  getCurrentUpdatePriority,
-  setCurrentUpdatePriority,
-} from 'react-reconciler/src/ReactEventPriorities';
+import { getInstanceFromNode, getClosestInstanceFromNode } from '../client/ReactDOMComponentTree';
+import { dispatchEventForPluginEventSystem } from './DOMPluginEventSystem';
+import { getCurrentPriorityLevel as getCurrentSchedulerPriorityLevel, IdlePriority as IdleSchedulerPriority, ImmediatePriority as ImmediateSchedulerPriority, LowPriority as LowSchedulerPriority, NormalPriority as NormalSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority } from 'react-reconciler/src/Scheduler';
+import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority } from 'react-reconciler/src/ReactEventPriorities';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
-import {isRootDehydrated} from 'react-reconciler/src/ReactFiberShellHydration';
+import { isRootDehydrated } from 'react-reconciler/src/ReactFiberShellHydration';
+const {
+  ReactCurrentBatchConfig
+} = ReactSharedInternals; // TODO: can we stop exporting these?
 
-const {ReactCurrentBatchConfig} = ReactSharedInternals;
-
-// TODO: can we stop exporting these?
-export let _enabled = true;
-
-// This is exported in FB builds for use by legacy FB layer infra.
+export let _enabled = true; // This is exported in FB builds for use by legacy FB layer infra.
 // We'd like to remove this but it's not clear if this is safe.
-export function setEnabled(enabled          ) {
+
+export function setEnabled(enabled) {
   _enabled = !!enabled;
 }
-
 export function isEnabled() {
   return _enabled;
 }
-
-export function createEventListenerWrapper(
-  targetContainer             ,
-  domEventName              ,
-  eventSystemFlags                  ,
-)           {
-  return dispatchEvent.bind(
-    null,
-    domEventName,
-    eventSystemFlags,
-    targetContainer,
-  );
+export function createEventListenerWrapper(targetContainer, domEventName, eventSystemFlags) {
+  return dispatchEvent.bind(null, domEventName, eventSystemFlags, targetContainer);
 }
-
-export function createEventListenerWrapperWithPriority(
-  targetContainer             ,
-  domEventName              ,
-  eventSystemFlags                  ,
-)           {
+export function createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags) {
   const eventPriority = getEventPriority(domEventName);
   let listenerWrapper;
+
   switch (eventPriority) {
     case DiscreteEventPriority:
       listenerWrapper = dispatchDiscreteEvent;
       break;
+
     case ContinuousEventPriority:
       listenerWrapper = dispatchContinuousEvent;
       break;
+
     case DefaultEventPriority:
     default:
       listenerWrapper = dispatchEvent;
       break;
   }
-  return listenerWrapper.bind(
-    null,
-    domEventName,
-    eventSystemFlags,
-    targetContainer,
-  );
+
+  return listenerWrapper.bind(null, domEventName, eventSystemFlags, targetContainer);
 }
 
-function dispatchDiscreteEvent(
-  domEventName,
-  eventSystemFlags,
-  container,
-  nativeEvent,
-) {
+function dispatchDiscreteEvent(domEventName, eventSystemFlags, container, nativeEvent) {
   const previousPriority = getCurrentUpdatePriority();
   const prevTransition = ReactCurrentBatchConfig.transition;
   ReactCurrentBatchConfig.transition = null;
+
   try {
     setCurrentUpdatePriority(DiscreteEventPriority);
     dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
@@ -128,15 +70,11 @@ function dispatchDiscreteEvent(
   }
 }
 
-function dispatchContinuousEvent(
-  domEventName,
-  eventSystemFlags,
-  container,
-  nativeEvent,
-) {
+function dispatchContinuousEvent(domEventName, eventSystemFlags, container, nativeEvent) {
   const previousPriority = getCurrentUpdatePriority();
   const prevTransition = ReactCurrentBatchConfig.transition;
   ReactCurrentBatchConfig.transition = null;
+
   try {
     setCurrentUpdatePriority(ContinuousEventPriority);
     dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
@@ -146,38 +84,19 @@ function dispatchContinuousEvent(
   }
 }
 
-export function dispatchEvent(
-  domEventName              ,
-  eventSystemFlags                  ,
-  targetContainer             ,
-  nativeEvent                ,
-)       {
+export function dispatchEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
   if (!_enabled) {
     return;
   }
+
   if (enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay) {
-    dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(
-      domEventName,
-      eventSystemFlags,
-      targetContainer,
-      nativeEvent,
-    );
+    dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent);
   } else {
-    dispatchEventOriginal(
-      domEventName,
-      eventSystemFlags,
-      targetContainer,
-      nativeEvent,
-    );
+    dispatchEventOriginal(domEventName, eventSystemFlags, targetContainer, nativeEvent);
   }
 }
 
-function dispatchEventOriginal(
-  domEventName              ,
-  eventSystemFlags                  ,
-  targetContainer             ,
-  nativeEvent                ,
-) {
+function dispatchEventOriginal(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
   // TODO: replaying capture phase events is currently broken
   // because we used to do it during top-level native bubble handlers
   // but now we use different bubble and capture handlers.
@@ -185,213 +104,141 @@ function dispatchEventOriginal(
   // to filter them out until we fix the logic to handle them correctly.
   const allowReplay = (eventSystemFlags & IS_CAPTURE_PHASE) === 0;
 
-  if (
-    allowReplay &&
-    hasQueuedDiscreteEvents() &&
-    isDiscreteEventThatRequiresHydration(domEventName)
-  ) {
+  if (allowReplay && hasQueuedDiscreteEvents() && isDiscreteEventThatRequiresHydration(domEventName)) {
     // If we already have a queue of discrete events, and this is another discrete
     // event, then we can't dispatch it regardless of its target, since they
     // need to dispatch in order.
-    queueDiscreteEvent(
-      null, // Flags that we're not actually blocked on anything as far as we know.
-      domEventName,
-      eventSystemFlags,
-      targetContainer,
-      nativeEvent,
-    );
+    queueDiscreteEvent(null, // Flags that we're not actually blocked on anything as far as we know.
+    domEventName, eventSystemFlags, targetContainer, nativeEvent);
     return;
   }
 
-  const blockedOn = findInstanceBlockingEvent(
-    domEventName,
-    eventSystemFlags,
-    targetContainer,
-    nativeEvent,
-  );
+  const blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
+
   if (blockedOn === null) {
-    dispatchEventForPluginEventSystem(
-      domEventName,
-      eventSystemFlags,
-      nativeEvent,
-      return_targetInst,
-      targetContainer,
-    );
+    dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
+
     if (allowReplay) {
       clearIfContinuousEvent(domEventName, nativeEvent);
     }
+
     return;
   }
 
   if (allowReplay) {
     if (isDiscreteEventThatRequiresHydration(domEventName)) {
       // This this to be replayed later once the target is available.
-      queueDiscreteEvent(
-        blockedOn,
-        domEventName,
-        eventSystemFlags,
-        targetContainer,
-        nativeEvent,
-      );
+      queueDiscreteEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent);
       return;
     }
-    if (
-      queueIfContinuousEvent(
-        blockedOn,
-        domEventName,
-        eventSystemFlags,
-        targetContainer,
-        nativeEvent,
-      )
-    ) {
-      return;
-    }
-    // We need to clear only if we didn't queue because
-    // queueing is accumulative.
-    clearIfContinuousEvent(domEventName, nativeEvent);
-  }
 
-  // This is not replayable so we'll invoke it but without a target,
+    if (queueIfContinuousEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent)) {
+      return;
+    } // We need to clear only if we didn't queue because
+    // queueing is accumulative.
+
+
+    clearIfContinuousEvent(domEventName, nativeEvent);
+  } // This is not replayable so we'll invoke it but without a target,
   // in case the event system needs to trace it.
-  dispatchEventForPluginEventSystem(
-    domEventName,
-    eventSystemFlags,
-    nativeEvent,
-    null,
-    targetContainer,
-  );
+
+
+  dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, null, targetContainer);
 }
 
-function dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(
-  domEventName              ,
-  eventSystemFlags                  ,
-  targetContainer             ,
-  nativeEvent                ,
-) {
-  let blockedOn = findInstanceBlockingEvent(
-    domEventName,
-    eventSystemFlags,
-    targetContainer,
-    nativeEvent,
-  );
+function dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
+  let blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
+
   if (blockedOn === null) {
-    dispatchEventForPluginEventSystem(
-      domEventName,
-      eventSystemFlags,
-      nativeEvent,
-      return_targetInst,
-      targetContainer,
-    );
+    dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
     clearIfContinuousEvent(domEventName, nativeEvent);
     return;
   }
 
-  if (
-    queueIfContinuousEvent(
-      blockedOn,
-      domEventName,
-      eventSystemFlags,
-      targetContainer,
-      nativeEvent,
-    )
-  ) {
+  if (queueIfContinuousEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent)) {
     nativeEvent.stopPropagation();
     return;
-  }
-  // We need to clear only if we didn't queue because
+  } // We need to clear only if we didn't queue because
   // queueing is accumulative.
+
+
   clearIfContinuousEvent(domEventName, nativeEvent);
 
-  if (
-    eventSystemFlags & IS_CAPTURE_PHASE &&
-    isDiscreteEventThatRequiresHydration(domEventName)
-  ) {
+  if (eventSystemFlags & IS_CAPTURE_PHASE && isDiscreteEventThatRequiresHydration(domEventName)) {
     while (blockedOn !== null) {
       const fiber = getInstanceFromNode(blockedOn);
+
       if (fiber !== null) {
         attemptSynchronousHydration(fiber);
       }
-      const nextBlockedOn = findInstanceBlockingEvent(
-        domEventName,
-        eventSystemFlags,
-        targetContainer,
-        nativeEvent,
-      );
+
+      const nextBlockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
+
       if (nextBlockedOn === null) {
-        dispatchEventForPluginEventSystem(
-          domEventName,
-          eventSystemFlags,
-          nativeEvent,
-          return_targetInst,
-          targetContainer,
-        );
+        dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
       }
+
       if (nextBlockedOn === blockedOn) {
         break;
       }
+
       blockedOn = nextBlockedOn;
     }
+
     if (blockedOn !== null) {
       nativeEvent.stopPropagation();
     }
-    return;
-  }
 
-  // This is not replayable so we'll invoke it but without a target,
+    return;
+  } // This is not replayable so we'll invoke it but without a target,
   // in case the event system needs to trace it.
-  dispatchEventForPluginEventSystem(
-    domEventName,
-    eventSystemFlags,
-    nativeEvent,
-    null,
-    targetContainer,
-  );
+
+
+  dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, null, targetContainer);
 }
 
-export let return_targetInst = null;
-
-// Returns a SuspenseInstance or Container if it's blocked.
+export let return_targetInst = null; // Returns a SuspenseInstance or Container if it's blocked.
 // The return_targetInst field above is conceptually part of the return value.
-export function findInstanceBlockingEvent(
-  domEventName              ,
-  eventSystemFlags                  ,
-  targetContainer             ,
-  nativeEvent                ,
-)                                      {
+
+export function findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
   // TODO: Warn if _enabled is false.
-
   return_targetInst = null;
-
   const nativeEventTarget = getEventTarget(nativeEvent);
   let targetInst = getClosestInstanceFromNode(nativeEventTarget);
 
   if (targetInst !== null) {
     const nearestMounted = getNearestMountedFiber(targetInst);
+
     if (nearestMounted === null) {
       // This tree has been unmounted already. Dispatch without a target.
       targetInst = null;
     } else {
       const tag = nearestMounted.tag;
+
       if (tag === SuspenseComponent) {
         const instance = getSuspenseInstanceFromFiber(nearestMounted);
+
         if (instance !== null) {
           // Queue the event to be replayed later. Abort dispatching since we
           // don't want this event dispatched twice through the event system.
           // TODO: If this is the first discrete event in the queue. Schedule an increased
           // priority for this boundary.
           return instance;
-        }
-        // This shouldn't happen, something went wrong but to avoid blocking
+        } // This shouldn't happen, something went wrong but to avoid blocking
         // the whole system, dispatch the event without a target.
         // TODO: Warn.
+
+
         targetInst = null;
       } else if (tag === HostRoot) {
-        const root            = nearestMounted.stateNode;
+        const root = nearestMounted.stateNode;
+
         if (isRootDehydrated(root)) {
           // If this happens during a replay something went wrong and it might block
           // the whole system.
           return getContainerFromFiber(nearestMounted);
         }
+
         targetInst = null;
       } else if (nearestMounted !== targetInst) {
         // If we get an event (ex: img onload) before committing that
@@ -402,12 +249,12 @@ export function findInstanceBlockingEvent(
       }
     }
   }
-  return_targetInst = targetInst;
-  // We're not blocked on anything.
+
+  return_targetInst = targetInst; // We're not blocked on anything.
+
   return null;
 }
-
-export function getEventPriority(domEventName              )    {
+export function getEventPriority(domEventName) {
   switch (domEventName) {
     // Used by SimpleEventPlugin:
     case 'cancel':
@@ -444,21 +291,21 @@ export function getEventPriority(domEventName              )    {
     case 'touchcancel':
     case 'touchend':
     case 'touchstart':
-    case 'volumechange':
-    // Used by polyfills:
+    case 'volumechange': // Used by polyfills:
     // eslint-disable-next-line no-fallthrough
+
     case 'change':
     case 'selectionchange':
     case 'textInput':
     case 'compositionstart':
     case 'compositionend':
-    case 'compositionupdate':
-    // Only enableCreateEventHandleAPI:
+    case 'compositionupdate': // Only enableCreateEventHandleAPI:
     // eslint-disable-next-line no-fallthrough
+
     case 'beforeblur':
-    case 'afterblur':
-    // Not used by React but could be by user code:
+    case 'afterblur': // Not used by React but could be by user code:
     // eslint-disable-next-line no-fallthrough
+
     case 'beforeinput':
     case 'blur':
     case 'fullscreenchange':
@@ -468,6 +315,7 @@ export function getEventPriority(domEventName              )    {
     case 'select':
     case 'selectstart':
       return DiscreteEventPriority;
+
     case 'drag':
     case 'dragenter':
     case 'dragexit':
@@ -482,34 +330,42 @@ export function getEventPriority(domEventName              )    {
     case 'scroll':
     case 'toggle':
     case 'touchmove':
-    case 'wheel':
-    // Not used by React but could be by user code:
+    case 'wheel': // Not used by React but could be by user code:
     // eslint-disable-next-line no-fallthrough
+
     case 'mouseenter':
     case 'mouseleave':
     case 'pointerenter':
     case 'pointerleave':
       return ContinuousEventPriority;
-    case 'message': {
-      // We might be in the Scheduler callback.
-      // Eventually this mechanism will be replaced by a check
-      // of the current priority on the native scheduler.
-      const schedulerPriority = getCurrentSchedulerPriorityLevel();
-      switch (schedulerPriority) {
-        case ImmediateSchedulerPriority:
-          return DiscreteEventPriority;
-        case UserBlockingSchedulerPriority:
-          return ContinuousEventPriority;
-        case NormalSchedulerPriority:
-        case LowSchedulerPriority:
-          // TODO: Handle LowSchedulerPriority, somehow. Maybe the same lane as hydration.
-          return DefaultEventPriority;
-        case IdleSchedulerPriority:
-          return IdleEventPriority;
-        default:
-          return DefaultEventPriority;
+
+    case 'message':
+      {
+        // We might be in the Scheduler callback.
+        // Eventually this mechanism will be replaced by a check
+        // of the current priority on the native scheduler.
+        const schedulerPriority = getCurrentSchedulerPriorityLevel();
+
+        switch (schedulerPriority) {
+          case ImmediateSchedulerPriority:
+            return DiscreteEventPriority;
+
+          case UserBlockingSchedulerPriority:
+            return ContinuousEventPriority;
+
+          case NormalSchedulerPriority:
+          case LowSchedulerPriority:
+            // TODO: Handle LowSchedulerPriority, somehow. Maybe the same lane as hydration.
+            return DefaultEventPriority;
+
+          case IdleSchedulerPriority:
+            return IdleEventPriority;
+
+          default:
+            return DefaultEventPriority;
+        }
       }
-    }
+
     default:
       return DefaultEventPriority;
   }

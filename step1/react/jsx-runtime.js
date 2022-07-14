@@ -6,4 +6,4 @@
  *
  *      
  */
-export {Fragment, jsx, jsxs} from './src/jsx/ReactJSX';
+export { Fragment, jsx, jsxs } from './src/jsx/ReactJSX';

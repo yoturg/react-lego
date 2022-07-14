@@ -6,25 +6,13 @@
  *
  *      
  */
-
-                                                        
-                                                   
-                                                           
-                                                          
-
-import {registerDirectEvent} from '../EventRegistry';
-import {isReplayingEvent} from '../CurrentReplayingEvent';
-import {SyntheticMouseEvent, SyntheticPointerEvent} from '../SyntheticEvent';
-import {
-  getClosestInstanceFromNode,
-  getNodeFromInstance,
-  isContainerMarkedAsRoot,
-} from '../../client/ReactDOMComponentTree';
-import {accumulateEnterLeaveTwoPhaseListeners} from '../DOMPluginEventSystem';
-                                                                         
-
-import {HostComponent, HostText} from 'react-reconciler/src/ReactWorkTags';
-import {getNearestMountedFiber} from 'react-reconciler/src/ReactFiberTreeReflection';
+import { registerDirectEvent } from '../EventRegistry';
+import { isReplayingEvent } from '../CurrentReplayingEvent';
+import { SyntheticMouseEvent, SyntheticPointerEvent } from '../SyntheticEvent';
+import { getClosestInstanceFromNode, getNodeFromInstance, isContainerMarkedAsRoot } from '../../client/ReactDOMComponentTree';
+import { accumulateEnterLeaveTwoPhaseListeners } from '../DOMPluginEventSystem';
+import { HostComponent, HostText } from 'react-reconciler/src/ReactWorkTags';
+import { getNearestMountedFiber } from 'react-reconciler/src/ReactFiberTreeReflection';
 
 function registerEvents() {
   registerDirectEvent('onMouseEnter', ['mouseout', 'mouseover']);
@@ -32,7 +20,6 @@ function registerEvents() {
   registerDirectEvent('onPointerEnter', ['pointerout', 'pointerover']);
   registerDirectEvent('onPointerLeave', ['pointerout', 'pointerover']);
 }
-
 /**
  * For almost every interaction we care about, there will be both a top-level
  * `mouseover` and `mouseout` event that occurs. Only use `mouseout` so that
@@ -40,34 +27,23 @@ function registerEvents() {
  * browser from outside will not fire a `mouseout` event. In this case, we use
  * the `mouseover` top-level event.
  */
-function extractEvents(
-  dispatchQueue               ,
-  domEventName              ,
-  targetInst              ,
-  nativeEvent                ,
-  nativeEventTarget                    ,
-  eventSystemFlags                  ,
-  targetContainer             ,
-) {
-  const isOverEvent =
-    domEventName === 'mouseover' || domEventName === 'pointerover';
-  const isOutEvent =
-    domEventName === 'mouseout' || domEventName === 'pointerout';
+
+
+function extractEvents(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget, eventSystemFlags, targetContainer) {
+  const isOverEvent = domEventName === 'mouseover' || domEventName === 'pointerover';
+  const isOutEvent = domEventName === 'mouseout' || domEventName === 'pointerout';
 
   if (isOverEvent && !isReplayingEvent(nativeEvent)) {
     // If this is an over event with a target, we might have already dispatched
     // the event in the out event of the other target. If this is replayed,
     // then it's because we couldn't dispatch against this target previously
     // so we have to do it now instead.
-    const related =
-      (nativeEvent     ).relatedTarget || (nativeEvent     ).fromElement;
+    const related = nativeEvent.relatedTarget || nativeEvent.fromElement;
+
     if (related) {
       // If the related node is managed by React, we can assume that we have
       // already dispatched the corresponding events during its mouseout.
-      if (
-        getClosestInstanceFromNode(related) ||
-        isContainerMarkedAsRoot(related)
-      ) {
+      if (getClosestInstanceFromNode(related) || isContainerMarkedAsRoot(related)) {
         return;
       }
     }
@@ -78,14 +54,15 @@ function extractEvents(
     return;
   }
 
-  let win;
-  // TODO: why is this nullable in the types but we read from it?
-  if ((nativeEventTarget     ).window === nativeEventTarget) {
+  let win; // TODO: why is this nullable in the types but we read from it?
+
+  if (nativeEventTarget.window === nativeEventTarget) {
     // `nativeEventTarget` is probably a window object.
     win = nativeEventTarget;
   } else {
     // TODO: Figure out why `ownerDocument` is sometimes undefined in IE8.
-    const doc = (nativeEventTarget     ).ownerDocument;
+    const doc = nativeEventTarget.ownerDocument;
+
     if (doc) {
       win = doc.defaultView || doc.parentWindow;
     } else {
@@ -95,16 +72,16 @@ function extractEvents(
 
   let from;
   let to;
+
   if (isOutEvent) {
-    const related = nativeEvent.relatedTarget || (nativeEvent     ).toElement;
+    const related = nativeEvent.relatedTarget || nativeEvent.toElement;
     from = targetInst;
-    to = related ? getClosestInstanceFromNode((related     )) : null;
+    to = related ? getClosestInstanceFromNode(related) : null;
+
     if (to !== null) {
       const nearestMounted = getNearestMountedFiber(to);
-      if (
-        to !== nearestMounted ||
-        (to.tag !== HostComponent && to.tag !== HostText)
-      ) {
+
+      if (to !== nearestMounted || to.tag !== HostComponent && to.tag !== HostText) {
         to = null;
       }
     }
@@ -123,6 +100,7 @@ function extractEvents(
   let leaveEventType = 'onMouseLeave';
   let enterEventType = 'onMouseEnter';
   let eventTypePrefix = 'mouse';
+
   if (domEventName === 'pointerout' || domEventName === 'pointerover') {
     SyntheticEventCtor = SyntheticPointerEvent;
     leaveEventType = 'onPointerLeave';
@@ -132,30 +110,16 @@ function extractEvents(
 
   const fromNode = from == null ? win : getNodeFromInstance(from);
   const toNode = to == null ? win : getNodeFromInstance(to);
-
-  const leave = new SyntheticEventCtor(
-    leaveEventType,
-    eventTypePrefix + 'leave',
-    from,
-    nativeEvent,
-    nativeEventTarget,
-  );
+  const leave = new SyntheticEventCtor(leaveEventType, eventTypePrefix + 'leave', from, nativeEvent, nativeEventTarget);
   leave.target = fromNode;
   leave.relatedTarget = toNode;
-
-  let enter                                  = null;
-
-  // We should only process this nativeEvent if we are processing
+  let enter = null; // We should only process this nativeEvent if we are processing
   // the first ancestor. Next time, we will ignore the event.
-  const nativeTargetInst = getClosestInstanceFromNode((nativeEventTarget     ));
+
+  const nativeTargetInst = getClosestInstanceFromNode(nativeEventTarget);
+
   if (nativeTargetInst === targetInst) {
-    const enterEvent                           = new SyntheticEventCtor(
-      enterEventType,
-      eventTypePrefix + 'enter',
-      to,
-      nativeEvent,
-      nativeEventTarget,
-    );
+    const enterEvent = new SyntheticEventCtor(enterEventType, eventTypePrefix + 'enter', to, nativeEvent, nativeEventTarget);
     enterEvent.target = toNode;
     enterEvent.relatedTarget = fromNode;
     enter = enterEvent;
@@ -164,4 +128,4 @@ function extractEvents(
   accumulateEnterLeaveTwoPhaseListeners(dispatchQueue, leave, enter, from, to);
 }
 
-export {registerEvents, extractEvents};
+export { registerEvents, extractEvents };

@@ -6,25 +6,10 @@
  *
  *      
  */
-
-                                                  
-
-import {registerTwoPhaseEvent} from './EventRegistry';
-import {
-  ANIMATION_END,
-  ANIMATION_ITERATION,
-  ANIMATION_START,
-  TRANSITION_END,
-} from './DOMEventNames';
-
-import {enableCreateEventHandleAPI} from 'shared/ReactFeatureFlags';
-
-export const topLevelEventsToReactNames      
-               
-                
-  = new Map();
-
-// NOTE: Capitalization is important in this list!
+import { registerTwoPhaseEvent } from './EventRegistry';
+import { ANIMATION_END, ANIMATION_ITERATION, ANIMATION_START, TRANSITION_END } from './DOMEventNames';
+import { enableCreateEventHandleAPI } from 'shared/ReactFeatureFlags';
+export const topLevelEventsToReactNames = new Map(); // NOTE: Capitalization is important in this list!
 //
 // E.g. it needs "pointerDown", not "pointerdown".
 // This is because we derive both React name ("onPointerDown")
@@ -33,76 +18,8 @@ export const topLevelEventsToReactNames
 // Exceptions that don't match this convention are listed separately.
 //
 // prettier-ignore
-const simpleEventPluginEvents = [
-  'abort',
-  'auxClick',
-  'cancel',
-  'canPlay',
-  'canPlayThrough',
-  'click',
-  'close',
-  'contextMenu',
-  'copy',
-  'cut',
-  'drag',
-  'dragEnd',
-  'dragEnter',
-  'dragExit',
-  'dragLeave',
-  'dragOver',
-  'dragStart',
-  'drop',
-  'durationChange',
-  'emptied',
-  'encrypted',
-  'ended',
-  'error',
-  'gotPointerCapture',
-  'input',
-  'invalid',
-  'keyDown',
-  'keyPress',
-  'keyUp',
-  'load',
-  'loadedData',
-  'loadedMetadata',
-  'loadStart',
-  'lostPointerCapture',
-  'mouseDown',
-  'mouseMove',
-  'mouseOut',
-  'mouseOver',
-  'mouseUp',
-  'paste',
-  'pause',
-  'play',
-  'playing',
-  'pointerCancel',
-  'pointerDown',
-  'pointerMove',
-  'pointerOut',
-  'pointerOver',
-  'pointerUp',
-  'progress',
-  'rateChange',
-  'reset',
-  'resize',
-  'seeked',
-  'seeking',
-  'stalled',
-  'submit',
-  'suspend',
-  'timeUpdate',
-  'touchCancel',
-  'touchEnd',
-  'touchStart',
-  'volumeChange',
-  'scroll',
-  'toggle',
-  'touchMove',
-  'waiting',
-  'wheel',
-];
+
+const simpleEventPluginEvents = ['abort', 'auxClick', 'cancel', 'canPlay', 'canPlayThrough', 'click', 'close', 'contextMenu', 'copy', 'cut', 'drag', 'dragEnd', 'dragEnter', 'dragExit', 'dragLeave', 'dragOver', 'dragStart', 'drop', 'durationChange', 'emptied', 'encrypted', 'ended', 'error', 'gotPointerCapture', 'input', 'invalid', 'keyDown', 'keyPress', 'keyUp', 'load', 'loadedData', 'loadedMetadata', 'loadStart', 'lostPointerCapture', 'mouseDown', 'mouseMove', 'mouseOut', 'mouseOver', 'mouseUp', 'paste', 'pause', 'play', 'playing', 'pointerCancel', 'pointerDown', 'pointerMove', 'pointerOut', 'pointerOver', 'pointerUp', 'progress', 'rateChange', 'reset', 'resize', 'seeked', 'seeking', 'stalled', 'submit', 'suspend', 'timeUpdate', 'touchCancel', 'touchEnd', 'touchStart', 'volumeChange', 'scroll', 'toggle', 'touchMove', 'waiting', 'wheel'];
 
 if (enableCreateEventHandleAPI) {
   // Special case: these two events don't have on* React handler
@@ -118,12 +35,13 @@ function registerSimpleEvent(domEventName, reactName) {
 
 export function registerSimpleEvents() {
   for (let i = 0; i < simpleEventPluginEvents.length; i++) {
-    const eventName = ((simpleEventPluginEvents[i]     )        );
-    const domEventName = ((eventName.toLowerCase()     )              );
+    const eventName = simpleEventPluginEvents[i];
+    const domEventName = eventName.toLowerCase();
     const capitalizedEvent = eventName[0].toUpperCase() + eventName.slice(1);
     registerSimpleEvent(domEventName, 'on' + capitalizedEvent);
-  }
-  // Special cases where event names don't match.
+  } // Special cases where event names don't match.
+
+
   registerSimpleEvent(ANIMATION_END, 'onAnimationEnd');
   registerSimpleEvent(ANIMATION_ITERATION, 'onAnimationIteration');
   registerSimpleEvent(ANIMATION_START, 'onAnimationStart');

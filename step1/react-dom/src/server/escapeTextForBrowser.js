@@ -29,17 +29,14 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 // code copied and modified from escape-html
+
 /**
  * Module variables.
  * @private
  */
-
-import {checkHtmlStringCoercion} from 'shared/CheckStringCoercion';
-
+import { checkHtmlStringCoercion } from 'shared/CheckStringCoercion';
 const matchHtmlRegExp = /["'&<>]/;
-
 /**
  * Escapes special characters and HTML entities in a given html string.
  *
@@ -49,9 +46,6 @@ const matchHtmlRegExp = /["'&<>]/;
  */
 
 function escapeHtml(string) {
-  if (__DEV__) {
-    checkHtmlStringCoercion(string);
-  }
   const str = '' + string;
   const match = matchHtmlRegExp.exec(str);
 
@@ -66,21 +60,32 @@ function escapeHtml(string) {
 
   for (index = match.index; index < str.length; index++) {
     switch (str.charCodeAt(index)) {
-      case 34: // "
+      case 34:
+        // "
         escape = '&quot;';
         break;
-      case 38: // &
+
+      case 38:
+        // &
         escape = '&amp;';
         break;
-      case 39: // '
+
+      case 39:
+        // '
         escape = '&#x27;'; // modified from escape-html; used to be '&#39'
+
         break;
-      case 60: // <
+
+      case 60:
+        // <
         escape = '&lt;';
         break;
-      case 62: // >
+
+      case 62:
+        // >
         escape = '&gt;';
         break;
+
       default:
         continue;
     }
@@ -94,8 +99,7 @@ function escapeHtml(string) {
   }
 
   return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
-}
-// end code copied and modified from escape-html
+} // end code copied and modified from escape-html
 
 /**
  * Escapes text to prevent scripting attacks.
@@ -103,6 +107,8 @@ function escapeHtml(string) {
  * @param {*} text Text value to escape.
  * @return {string} An escaped string.
  */
+
+
 function escapeTextForBrowser(text) {
   if (typeof text === 'boolean' || typeof text === 'number') {
     // this shortcircuit helps perf for types that we know will never have
@@ -110,6 +116,7 @@ function escapeTextForBrowser(text) {
     // for numeric dom ids.
     return '' + text;
   }
+
   return escapeHtml(text);
 }
 

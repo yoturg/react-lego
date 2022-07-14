@@ -5,10 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+const dynamicFeatureFlags = require('SchedulerFeatureFlags'); // Re-export dynamic flags from the www version.
 
-const dynamicFeatureFlags = require('SchedulerFeatureFlags');
 
-// Re-export dynamic flags from the www version.
 export const {
   enableIsInputPending,
   enableSchedulerDebugging,
@@ -16,7 +15,6 @@ export const {
   enableIsInputPendingContinuous,
   frameYieldMs,
   continuousYieldMs,
-  maxYieldMs,
+  maxYieldMs
 } = dynamicFeatureFlags;
-
 export const enableProfiling = __PROFILE__ && enableProfilingFeatureFlag;

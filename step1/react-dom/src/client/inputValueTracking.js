@@ -6,37 +6,25 @@
  *
  *      
  */
+import { checkFormFieldValueStringCoercion } from 'shared/CheckStringCoercion';
 
-import {checkFormFieldValueStringCoercion} from 'shared/CheckStringCoercion';
-
-                      
-                     
-                                
-                       
-   
-                                                         
-                                                               
-
-function isCheckable(elem                  ) {
+function isCheckable(elem) {
   const type = elem.type;
   const nodeName = elem.nodeName;
-  return (
-    nodeName &&
-    nodeName.toLowerCase() === 'input' &&
-    (type === 'checkbox' || type === 'radio')
-  );
+  return nodeName && nodeName.toLowerCase() === 'input' && (type === 'checkbox' || type === 'radio');
 }
 
-function getTracker(node                         ) {
+function getTracker(node) {
   return node._valueTracker;
 }
 
-function detachTracker(node                         ) {
+function detachTracker(node) {
   node._valueTracker = null;
 }
 
-function getValueFromNode(node                  )         {
+function getValueFromNode(node) {
   let value = '';
+
   if (!node) {
     return value;
   }
@@ -50,102 +38,90 @@ function getValueFromNode(node                  )         {
   return value;
 }
 
-function trackValueOnNode(node     )                {
+function trackValueOnNode(node) {
   const valueField = isCheckable(node) ? 'checked' : 'value';
-  const descriptor = Object.getOwnPropertyDescriptor(
-    node.constructor.prototype,
-    valueField,
-  );
-
-  if (__DEV__) {
-    checkFormFieldValueStringCoercion(node[valueField]);
-  }
-  let currentValue = '' + node[valueField];
-
-  // if someone has already defined a value or Safari, then bail
+  const descriptor = Object.getOwnPropertyDescriptor(node.constructor.prototype, valueField);
+  let currentValue = '' + node[valueField]; // if someone has already defined a value or Safari, then bail
   // and don't track value will cause over reporting of changes,
   // but it's better then a hard failure
   // (needed for certain tests that spyOn input values and Safari)
-  if (
-    node.hasOwnProperty(valueField) ||
-    typeof descriptor === 'undefined' ||
-    typeof descriptor.get !== 'function' ||
-    typeof descriptor.set !== 'function'
-  ) {
+
+  if (node.hasOwnProperty(valueField) || typeof descriptor === 'undefined' || typeof descriptor.get !== 'function' || typeof descriptor.set !== 'function') {
     return;
   }
-  const {get, set} = descriptor;
+
+  const {
+    get,
+    set
+  } = descriptor;
   Object.defineProperty(node, valueField, {
     configurable: true,
-    get: function() {
+    get: function () {
       return get.call(this);
     },
-    set: function(value) {
-      if (__DEV__) {
-        checkFormFieldValueStringCoercion(value);
-      }
+    set: function (value) {
       currentValue = '' + value;
       set.call(this, value);
-    },
-  });
-  // We could've passed this the first time
+    }
+  }); // We could've passed this the first time
   // but it triggers a bug in IE11 and Edge 14/15.
   // Calling defineProperty() again should be equivalent.
   // https://github.com/facebook/react/issues/11768
-  Object.defineProperty(node, valueField, {
-    enumerable: descriptor.enumerable,
-  });
 
+  Object.defineProperty(node, valueField, {
+    enumerable: descriptor.enumerable
+  });
   const tracker = {
     getValue() {
       return currentValue;
     },
+
     setValue(value) {
-      if (__DEV__) {
-        checkFormFieldValueStringCoercion(value);
-      }
       currentValue = '' + value;
     },
+
     stopTracking() {
       detachTracker(node);
       delete node[valueField];
-    },
+    }
+
   };
   return tracker;
 }
 
-export function track(node                         ) {
+export function track(node) {
   if (getTracker(node)) {
     return;
-  }
+  } // TODO: Once it's just Fiber we can move this to node._wrapperState
 
-  // TODO: Once it's just Fiber we can move this to node._wrapperState
+
   node._valueTracker = trackValueOnNode(node);
 }
-
-export function updateValueIfChanged(node                         ) {
+export function updateValueIfChanged(node) {
   if (!node) {
     return false;
   }
 
-  const tracker = getTracker(node);
-  // if there is no tracker at this point it's unlikely
+  const tracker = getTracker(node); // if there is no tracker at this point it's unlikely
   // that trying again will succeed
+
   if (!tracker) {
     return true;
   }
 
   const lastValue = tracker.getValue();
   const nextValue = getValueFromNode(node);
+
   if (nextValue !== lastValue) {
     tracker.setValue(nextValue);
     return true;
   }
+
   return false;
 }
-
-export function stopTracking(node                         ) {
+export function stopTracking(node) {
   const tracker = getTracker(node);
+
   if (tracker) {
     tracker.stopTracking();
   }

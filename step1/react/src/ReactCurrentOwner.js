@@ -7,8 +7,6 @@
  *      
  */
 
-                                                                   
-
 /**
  * Keeps track of the current owner.
  *
@@ -20,7 +18,6 @@ const ReactCurrentOwner = {
    * @internal
    * @type {ReactComponent}
    */
-  current: (null              ),
+  current: null
 };
-
 export default ReactCurrentOwner;

@@ -4,14 +4,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 const ariaProperties = {
-  'aria-current': 0, // state
+  'aria-current': 0,
+  // state
   'aria-description': 0,
   'aria-details': 0,
-  'aria-disabled': 0, // state
-  'aria-hidden': 0, // state
-  'aria-invalid': 0, // state
+  'aria-disabled': 0,
+  // state
+  'aria-hidden': 0,
+  // state
+  'aria-invalid': 0,
+  // state
   'aria-keyshortcuts': 0,
   'aria-label': 0,
   'aria-roledescription': 0,
@@ -58,7 +61,6 @@ const ariaProperties = {
   'aria-rowcount': 0,
   'aria-rowindex': 0,
   'aria-rowspan': 0,
-  'aria-setsize': 0,
+  'aria-setsize': 0
 };
-
 export default ariaProperties;

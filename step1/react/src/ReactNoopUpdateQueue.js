@@ -4,34 +4,14 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 const didWarnStateUpdateForUnmountedComponent = {};
 
-function warnNoop(publicInstance, callerName) {
-  if (__DEV__) {
-    const constructor = publicInstance.constructor;
-    const componentName =
-      (constructor && (constructor.displayName || constructor.name)) ||
-      'ReactClass';
-    const warningKey = `${componentName}.${callerName}`;
-    if (didWarnStateUpdateForUnmountedComponent[warningKey]) {
-      return;
-    }
-    console.error(
-      "Can't call %s on a component that is not yet mounted. " +
-        'This is a no-op, but it might indicate a bug in your application. ' +
-        'Instead, assign to `this.state` directly or define a `state = {};` ' +
-        'class property with the desired state in the %s component.',
-      callerName,
-      componentName,
-    );
-    didWarnStateUpdateForUnmountedComponent[warningKey] = true;
-  }
-}
-
+function warnNoop(publicInstance, callerName) {}
 /**
  * This is the abstract API for an update queue.
  */
+
+
 const ReactNoopUpdateQueue = {
   /**
    * Checks whether or not this composite component is mounted.
@@ -40,7 +20,7 @@ const ReactNoopUpdateQueue = {
    * @protected
    * @final
    */
-  isMounted: function(publicInstance) {
+  isMounted: function (publicInstance) {
     return false;
   },
 
@@ -59,7 +39,7 @@ const ReactNoopUpdateQueue = {
    * @param {?string} callerName name of the calling function in the public API.
    * @internal
    */
-  enqueueForceUpdate: function(publicInstance, callback, callerName) {
+  enqueueForceUpdate: function (publicInstance, callback, callerName) {
     warnNoop(publicInstance, 'forceUpdate');
   },
 
@@ -76,12 +56,7 @@ const ReactNoopUpdateQueue = {
    * @param {?string} callerName name of the calling function in the public API.
    * @internal
    */
-  enqueueReplaceState: function(
-    publicInstance,
-    completeState,
-    callback,
-    callerName,
-  ) {
+  enqueueReplaceState: function (publicInstance, completeState, callback, callerName) {
     warnNoop(publicInstance, 'replaceState');
   },
 
@@ -97,14 +72,8 @@ const ReactNoopUpdateQueue = {
    * @param {?string} Name of the calling function in the public API.
    * @internal
    */
-  enqueueSetState: function(
-    publicInstance,
-    partialState,
-    callback,
-    callerName,
-  ) {
+  enqueueSetState: function (publicInstance, partialState, callback, callerName) {
     warnNoop(publicInstance, 'setState');
-  },
+  }
 };
-
 export default ReactNoopUpdateQueue;

@@ -6,14 +6,10 @@
  *
  *      
  */
-
-                                                    
-                                                    
-
 // This is imported by the event replaying implementation in React DOM. It's
 // in a separate file to break a circular dependency between the renderer and
 // the reconciler.
-export function isRootDehydrated(root           ) {
-  const currentState            = root.current.memoizedState;
+export function isRootDehydrated(root) {
+  const currentState = root.current.memoizedState;
   return currentState.isDehydrated;
 }

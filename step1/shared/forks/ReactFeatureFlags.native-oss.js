@@ -6,14 +6,10 @@
  *
  *      
  */
-
-                                                                    
-                                                                     
-
 export const debugRenderPhaseSideEffectsForStrictMode = false;
 export const enableDebugTracing = false;
 export const enableSchedulingProfiler = false;
-export const replayFailedUnitOfWorkWithInvokeGuardedCallback = __DEV__;
+export const replayFailedUnitOfWorkWithInvokeGuardedCallback = false;
 export const warnAboutDeprecatedLifecycles = true;
 export const enableProfilerTimer = __PROFILE__;
 export const enableProfilerCommitHooks = __PROFILE__;
@@ -51,27 +47,21 @@ export const deletedTreeCleanUpLevel = 3;
 export const enableGetInspectorDataForInstanceInProduction = false;
 export const enableNewReconciler = false;
 export const deferRenderPhaseUpdateToNextBatch = false;
-
 export const enableStrictEffects = false;
 export const createRootStrictEffectsByDefault = false;
 export const enableUseRefAccessWarning = false;
-
 export const disableSchedulerTimeoutInWorkLoop = false;
 export const enableLazyContextPropagation = false;
 export const enableLegacyHidden = false;
 export const enableSyncDefaultUpdates = true;
 export const allowConcurrentByDefault = false;
 export const enableCustomElementPropertySupport = false;
-
 export const consoleManagedByDevToolsDuringStrictMode = false;
 export const enableServerContext = false;
 export const enableUseMutableSource = false;
-
 export const enableTransitionTracing = false;
-export const enableSymbolFallbackForWWW = false;
-
-// Flow magic to verify the exports of this file match the original version.
+export const enableSymbolFallbackForWWW = false; // Flow magic to verify the exports of this file match the original version.
 // eslint-disable-next-line no-unused-vars
-                                        
 // eslint-disable-next-line no-unused-expressions
-(null                                      );
+
+null;

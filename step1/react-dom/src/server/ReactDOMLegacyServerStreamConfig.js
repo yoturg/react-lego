@@ -6,53 +6,28 @@
  *
  *      
  */
-
-                           
-                                      
-                               
-     
-  
-
-                                      
-                           
-
-export function scheduleWork(callback            ) {
+export function scheduleWork(callback) {
   callback();
 }
-
-export function flushBuffered(destination             ) {}
-
-export function beginWriting(destination             ) {}
-
-export function writeChunk(
-  destination             ,
-  chunk                          ,
-)       {
+export function flushBuffered(destination) {}
+export function beginWriting(destination) {}
+export function writeChunk(destination, chunk) {
   writeChunkAndReturn(destination, chunk);
 }
-
-export function writeChunkAndReturn(
-  destination             ,
-  chunk                          ,
-)          {
+export function writeChunkAndReturn(destination, chunk) {
   return destination.push(chunk);
 }
-
-export function completeWriting(destination             ) {}
-
-export function close(destination             ) {
+export function completeWriting(destination) {}
+export function close(destination) {
   destination.push(null);
 }
-
-export function stringToChunk(content        )        {
+export function stringToChunk(content) {
   return content;
 }
-
-export function stringToPrecomputedChunk(content        )                   {
+export function stringToPrecomputedChunk(content) {
   return content;
 }
-
-export function closeWithError(destination             , error       )       {
+export function closeWithError(destination, error) {
   // $FlowFixMe: This is an Error object or the destination accepts other types.
   destination.destroy(error);
 }

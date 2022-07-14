@@ -6,11 +6,11 @@
  *
  *      
  */
-
-function isCustomComponent(tagName        , props        ) {
+function isCustomComponent(tagName, props) {
   if (tagName.indexOf('-') === -1) {
     return typeof props.is === 'string';
   }
+
   switch (tagName) {
     // These are reserved SVG and MathML elements.
     // We don't mind this list too much because we expect it to never grow.
@@ -25,6 +25,7 @@ function isCustomComponent(tagName        , props        ) {
     case 'font-face-name':
     case 'missing-glyph':
       return false;
+
     default:
       return true;
   }

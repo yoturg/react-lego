@@ -6,51 +6,16 @@
  *
  *      
  */
-
 'use strict';
 
-                                                     
-             
-           
-                     
-                    
-                                   
-
-import {
-  createRoot as createRootImpl,
-  hydrateRoot as hydrateRootImpl,
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED as Internals,
-} from './';
-
-export function createRoot(
-  container                                       ,
-  options                    ,
-)           {
-  if (__DEV__) {
-    Internals.usingClientEntryPoint = true;
-  }
+import { createRoot as createRootImpl, hydrateRoot as hydrateRootImpl, __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED as Internals } from './';
+export function createRoot(container, options) {
   try {
     return createRootImpl(container, options);
-  } finally {
-    if (__DEV__) {
-      Internals.usingClientEntryPoint = false;
-    }
-  }
+  } finally {}
 }
-
-export function hydrateRoot(
-  container                    ,
-  children               ,
-  options                     ,
-)           {
-  if (__DEV__) {
-    Internals.usingClientEntryPoint = true;
-  }
+export function hydrateRoot(container, children, options) {
   try {
     return hydrateRootImpl(container, children, options);
-  } finally {
-    if (__DEV__) {
-      Internals.usingClientEntryPoint = false;
-    }
-  }
+  } finally {}
 }

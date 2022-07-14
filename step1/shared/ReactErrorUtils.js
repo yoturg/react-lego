@@ -6,24 +6,20 @@
  *
  *      
  */
+import invokeGuardedCallbackImpl from './invokeGuardedCallbackImpl'; // Used by Fiber to simulate a try-catch.
 
-import invokeGuardedCallbackImpl from './invokeGuardedCallbackImpl';
+let hasError = false;
+let caughtError = null; // Used by event system to capture/rethrow the first error.
 
-// Used by Fiber to simulate a try-catch.
-let hasError          = false;
-let caughtError        = null;
-
-// Used by event system to capture/rethrow the first error.
-let hasRethrowError          = false;
-let rethrowError        = null;
-
+let hasRethrowError = false;
+let rethrowError = null;
 const reporter = {
-  onError(error       ) {
+  onError(error) {
     hasError = true;
     caughtError = error;
-  },
-};
+  }
 
+};
 /**
  * Call a function while guarding against errors that happens within it.
  * Returns an error if it throws, otherwise null.
@@ -37,22 +33,12 @@ const reporter = {
  * @param {*} context The context to use when calling the function
  * @param {...*} args Arguments for function
  */
-export function invokeGuardedCallback                           (
-  name               ,
-  func                                               ,
-  context         ,
-  a   ,
-  b   ,
-  c   ,
-  d   ,
-  e   ,
-  f   ,
-)       {
+
+export function invokeGuardedCallback(name, func, context, a, b, c, d, e, f) {
   hasError = false;
   caughtError = null;
   invokeGuardedCallbackImpl.apply(reporter, arguments);
 }
-
 /**
  * Same as invokeGuardedCallback, but instead of returning an error, it stores
  * it in a global so it can be rethrown by `rethrowCaughtError` later.
@@ -63,39 +49,24 @@ export function invokeGuardedCallback                           (
  * @param {*} context The context to use when calling the function
  * @param {...*} args Arguments for function
  */
-export function invokeGuardedCallbackAndCatchFirstError 
-    
-    
-    
-    
-    
-    
-          
- (
-  name               ,
-  func                                              ,
-  context         ,
-  a   ,
-  b   ,
-  c   ,
-  d   ,
-  e   ,
-  f   ,
-)       {
+
+export function invokeGuardedCallbackAndCatchFirstError(name, func, context, a, b, c, d, e, f) {
   invokeGuardedCallback.apply(this, arguments);
+
   if (hasError) {
     const error = clearCaughtError();
+
     if (!hasRethrowError) {
       hasRethrowError = true;
       rethrowError = error;
     }
   }
 }
-
 /**
  * During execution of guarded functions we will capture the first error which
  * we will rethrow to be handled by the top level error handler.
  */
+
 export function rethrowCaughtError() {
   if (hasRethrowError) {
     const error = rethrowError;
@@ -104,11 +75,9 @@ export function rethrowCaughtError() {
     throw error;
   }
 }
-
 export function hasCaughtError() {
   return hasError;
 }
-
 export function clearCaughtError() {
   if (hasError) {
     const error = caughtError;
@@ -116,9 +85,6 @@ export function clearCaughtError() {
     caughtError = null;
     return error;
   } else {
-    throw new Error(
-      'clearCaughtError was called but no error was captured. This error ' +
-        'is likely caused by a bug in React. Please file an issue.',
-    );
+    throw new Error('clearCaughtError was called but no error was captured. This error ' + 'is likely caused by a bug in React. Please file an issue.');
   }
 }

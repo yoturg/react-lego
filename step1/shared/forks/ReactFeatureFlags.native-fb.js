@@ -6,19 +6,13 @@
  *
  *      
  */
-
-                                                                    
-                                                                    
-
 // NOTE: There are no flags, currently. Uncomment the stuff below if we add one.
 // Re-export dynamic flags from the internal module. Intentionally using *
 // because this import is compiled to a `require` call.
 // import * as dynamicFlags from 'ReactNativeInternalFeatureFlags';
-
 // We destructure each value before re-exporting to avoid a dynamic look-up on
 // the exports object every time a flag is read.
 // export const {} = dynamicFlags;
-
 // The rest of the flags are static for better dead code elimination.
 export const enableDebugTracing = false;
 export const enableSchedulingProfiler = __PROFILE__;
@@ -34,7 +28,7 @@ export const debugRenderPhaseSideEffectsForStrictMode = true;
 export const disableJavaScriptURLs = false;
 export const disableCommentsAsDOMContainers = true;
 export const disableInputAttributeSyncing = false;
-export const replayFailedUnitOfWorkWithInvokeGuardedCallback = __DEV__;
+export const replayFailedUnitOfWorkWithInvokeGuardedCallback = false;
 export const warnAboutDeprecatedLifecycles = true;
 export const enableScopeAPI = false;
 export const enableCreateEventHandleAPI = false;
@@ -61,28 +55,21 @@ export const deletedTreeCleanUpLevel = 3;
 export const enableGetInspectorDataForInstanceInProduction = true;
 export const enableNewReconciler = false;
 export const deferRenderPhaseUpdateToNextBatch = false;
-
-export const enableStrictEffects = __DEV__;
+export const enableStrictEffects = false;
 export const createRootStrictEffectsByDefault = false;
 export const enableUseRefAccessWarning = false;
-
 export const disableSchedulerTimeoutInWorkLoop = false;
 export const enableLazyContextPropagation = false;
 export const enableLegacyHidden = true;
 export const enableSyncDefaultUpdates = true;
 export const allowConcurrentByDefault = true;
 export const enableCustomElementPropertySupport = false;
-
 export const consoleManagedByDevToolsDuringStrictMode = false;
 export const enableServerContext = false;
-
 export const enableUseMutableSource = true;
-
 export const enableTransitionTracing = false;
-export const enableSymbolFallbackForWWW = false;
-
-// Flow magic to verify the exports of this file match the original version.
+export const enableSymbolFallbackForWWW = false; // Flow magic to verify the exports of this file match the original version.
 // eslint-disable-next-line no-unused-vars
-                                        
 // eslint-disable-next-line no-unused-expressions
-(null                                      );
+
+null;

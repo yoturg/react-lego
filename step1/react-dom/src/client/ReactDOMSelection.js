@@ -4,32 +4,37 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import getNodeForCharacterOffset from './getNodeForCharacterOffset';
-import {TEXT_NODE} from '../shared/HTMLNodeType';
-
+import { TEXT_NODE } from '../shared/HTMLNodeType';
 /**
  * @param {DOMElement} outerNode
  * @return {?object}
  */
+
 export function getOffsets(outerNode) {
-  const {ownerDocument} = outerNode;
-  const win = (ownerDocument && ownerDocument.defaultView) || window;
+  const {
+    ownerDocument
+  } = outerNode;
+  const win = ownerDocument && ownerDocument.defaultView || window;
   const selection = win.getSelection && win.getSelection();
 
   if (!selection || selection.rangeCount === 0) {
     return null;
   }
 
-  const {anchorNode, anchorOffset, focusNode, focusOffset} = selection;
-
-  // In Firefox, anchorNode and focusNode can be "anonymous divs", e.g. the
+  const {
+    anchorNode,
+    anchorOffset,
+    focusNode,
+    focusOffset
+  } = selection; // In Firefox, anchorNode and focusNode can be "anonymous divs", e.g. the
   // up/down buttons on an <input type="number">. Anonymous divs do not seem to
   // expose properties, triggering a "Permission denied error" if any of its
   // properties are accessed. The only seemingly possible way to avoid erroring
   // is to access a property that typically works for non-anonymous divs and
   // catch any error that may otherwise arise. See
   // https://bugzilla.mozilla.org/show_bug.cgi?id=208427
+
   try {
     /* eslint-disable no-unused-expressions */
     anchorNode.nodeType;
@@ -39,15 +44,8 @@ export function getOffsets(outerNode) {
     return null;
   }
 
-  return getModernOffsetsFromPoints(
-    outerNode,
-    anchorNode,
-    anchorOffset,
-    focusNode,
-    focusOffset,
-  );
+  return getModernOffsetsFromPoints(outerNode, anchorNode, anchorOffset, focusNode, focusOffset);
 }
-
 /**
  * Returns {start, end} where `start` is the character/codepoint index of
  * (anchorNode, anchorOffset) within the textContent of `outerNode`, and
@@ -57,13 +55,8 @@ export function getOffsets(outerNode) {
  *
  * Exported only for testing.
  */
-export function getModernOffsetsFromPoints(
-  outerNode,
-  anchorNode,
-  anchorOffset,
-  focusNode,
-  focusOffset,
-) {
+
+export function getModernOffsetsFromPoints(outerNode, anchorNode, anchorOffset, focusNode, focusOffset) {
   let length = 0;
   let start = -1;
   let end = -1;
@@ -76,16 +69,11 @@ export function getModernOffsetsFromPoints(
     let next = null;
 
     while (true) {
-      if (
-        node === anchorNode &&
-        (anchorOffset === 0 || node.nodeType === TEXT_NODE)
-      ) {
+      if (node === anchorNode && (anchorOffset === 0 || node.nodeType === TEXT_NODE)) {
         start = length + anchorOffset;
       }
-      if (
-        node === focusNode &&
-        (focusOffset === 0 || node.nodeType === TEXT_NODE)
-      ) {
+
+      if (node === focusNode && (focusOffset === 0 || node.nodeType === TEXT_NODE)) {
         end = length + focusOffset;
       }
 
@@ -95,8 +83,9 @@ export function getModernOffsetsFromPoints(
 
       if ((next = node.firstChild) === null) {
         break;
-      }
-      // Moving from `node` to its first child `next`.
+      } // Moving from `node` to its first child `next`.
+
+
       parentNode = node;
       node = next;
     }
@@ -109,20 +98,24 @@ export function getModernOffsetsFromPoints(
         // and both offsets 0, in which case we will have handled above.
         break outer;
       }
+
       if (parentNode === anchorNode && ++indexWithinAnchor === anchorOffset) {
         start = length;
       }
+
       if (parentNode === focusNode && ++indexWithinFocus === focusOffset) {
         end = length;
       }
+
       if ((next = node.nextSibling) !== null) {
         break;
       }
+
       node = parentNode;
       parentNode = node.parentNode;
-    }
+    } // Moving from `node` to its next sibling `next`.
 
-    // Moving from `node` to its next sibling `next`.
+
     node = next;
   }
 
@@ -134,10 +127,9 @@ export function getModernOffsetsFromPoints(
 
   return {
     start: start,
-    end: end,
+    end: end
   };
 }
-
 /**
  * In modern non-IE browsers, we can support both forward and backward
  * selections.
@@ -150,13 +142,13 @@ export function getModernOffsetsFromPoints(
  * @param {DOMElement|DOMTextNode} node
  * @param {object} offsets
  */
+
 export function setOffsets(node, offsets) {
   const doc = node.ownerDocument || document;
-  const win = (doc && doc.defaultView) || window;
-
-  // Edge fails with "Object expected" in some scenarios.
+  const win = doc && doc.defaultView || window; // Edge fails with "Object expected" in some scenarios.
   // (For instance: TinyMCE editor used in a list component that supports pasting to add more,
   // fails when pasting 100+ items)
+
   if (!win.getSelection) {
     return;
   }
@@ -164,10 +156,9 @@ export function setOffsets(node, offsets) {
   const selection = win.getSelection();
   const length = node.textContent.length;
   let start = Math.min(offsets.start, length);
-  let end = offsets.end === undefined ? start : Math.min(offsets.end, length);
-
-  // IE 11 uses modern selection, but doesn't support the extend method.
+  let end = offsets.end === undefined ? start : Math.min(offsets.end, length); // IE 11 uses modern selection, but doesn't support the extend method.
   // Flip backward selections, so we can set with a single range.
+
   if (!selection.extend && start > end) {
     const temp = end;
     end = start;
@@ -178,15 +169,10 @@ export function setOffsets(node, offsets) {
   const endMarker = getNodeForCharacterOffset(node, end);
 
   if (startMarker && endMarker) {
-    if (
-      selection.rangeCount === 1 &&
-      selection.anchorNode === startMarker.node &&
-      selection.anchorOffset === startMarker.offset &&
-      selection.focusNode === endMarker.node &&
-      selection.focusOffset === endMarker.offset
-    ) {
+    if (selection.rangeCount === 1 && selection.anchorNode === startMarker.node && selection.anchorOffset === startMarker.offset && selection.focusNode === endMarker.node && selection.focusOffset === endMarker.offset) {
       return;
     }
+
     const range = doc.createRange();
     range.setStart(startMarker.node, startMarker.offset);
     selection.removeAllRanges();

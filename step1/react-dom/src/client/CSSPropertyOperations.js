@@ -4,13 +4,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-import {shorthandToLonghand} from './CSSShorthandProperty';
-
+import { shorthandToLonghand } from './CSSShorthandProperty';
 import dangerousStyleValue from '../shared/dangerousStyleValue';
 import hyphenateStyleName from '../shared/hyphenateStyleName';
 import warnValidStyle from '../shared/warnValidStyle';
-
 /**
  * Operations for dealing with CSS properties.
  */
@@ -21,34 +18,8 @@ import warnValidStyle from '../shared/warnValidStyle';
  * security checks so it's not safe to use this value for anything other than
  * comparison. It is only used in DEV for SSR validation.
  */
-export function createDangerousStringForStyles(styles) {
-  if (__DEV__) {
-    let serialized = '';
-    let delimiter = '';
-    for (const styleName in styles) {
-      if (!styles.hasOwnProperty(styleName)) {
-        continue;
-      }
-      const styleValue = styles[styleName];
-      if (styleValue != null) {
-        const isCustomProperty = styleName.indexOf('--') === 0;
-        serialized +=
-          delimiter +
-          (isCustomProperty ? styleName : hyphenateStyleName(styleName)) +
-          ':';
-        serialized += dangerousStyleValue(
-          styleName,
-          styleValue,
-          isCustomProperty,
-        );
 
-        delimiter = ';';
-      }
-    }
-    return serialized || null;
-  }
-}
-
+export function createDangerousStringForStyles(styles) {}
 /**
  * Sets the value for multiple styles on a node.  If a value is specified as
  * '' (empty string), the corresponding style property will be unset.
@@ -56,26 +27,22 @@ export function createDangerousStringForStyles(styles) {
  * @param {DOMElement} node
  * @param {object} styles
  */
+
 export function setValueForStyles(node, styles) {
   const style = node.style;
+
   for (let styleName in styles) {
     if (!styles.hasOwnProperty(styleName)) {
       continue;
     }
+
     const isCustomProperty = styleName.indexOf('--') === 0;
-    if (__DEV__) {
-      if (!isCustomProperty) {
-        warnValidStyle(styleName, styles[styleName]);
-      }
-    }
-    const styleValue = dangerousStyleValue(
-      styleName,
-      styles[styleName],
-      isCustomProperty,
-    );
+    const styleValue = dangerousStyleValue(styleName, styles[styleName], isCustomProperty);
+
     if (styleName === 'float') {
       styleName = 'cssFloat';
     }
+
     if (isCustomProperty) {
       style.setProperty(styleName, styleValue);
     } else {
@@ -87,7 +54,6 @@ export function setValueForStyles(node, styles) {
 function isValueEmpty(value) {
   return value == null || typeof value === 'boolean' || value === '';
 }
-
 /**
  * Given {color: 'red', overflow: 'hidden'} returns {
  *   color: 'color',
@@ -96,17 +62,21 @@ function isValueEmpty(value) {
  * }. This can be read as "the overflowY property was set by the overflow
  * shorthand". That is, the values are the property that each was derived from.
  */
+
+
 function expandShorthandMap(styles) {
   const expanded = {};
+
   for (const key in styles) {
     const longhands = shorthandToLonghand[key] || [key];
+
     for (let i = 0; i < longhands.length; i++) {
       expanded[longhands[i]] = key;
     }
   }
+
   return expanded;
 }
-
 /**
  * When mixing shorthand and longhand property names, we warn during updates if
  * we expect an incorrect result to occur. In particular, we warn for:
@@ -121,38 +91,6 @@ function expandShorthandMap(styles) {
  *   {font: 'foo', fontVariant: 'bar'} -> {font: 'foo'}
  *   becomes .style.fontVariant = ''
  */
-export function validateShorthandPropertyCollisionInDev(
-  styleUpdates,
-  nextStyles,
-) {
-  if (__DEV__) {
-    if (!nextStyles) {
-      return;
-    }
 
-    const expandedUpdates = expandShorthandMap(styleUpdates);
-    const expandedStyles = expandShorthandMap(nextStyles);
-    const warnedAbout = {};
-    for (const key in expandedUpdates) {
-      const originalKey = expandedUpdates[key];
-      const correctOriginalKey = expandedStyles[key];
-      if (correctOriginalKey && originalKey !== correctOriginalKey) {
-        const warningKey = originalKey + ',' + correctOriginalKey;
-        if (warnedAbout[warningKey]) {
-          continue;
-        }
-        warnedAbout[warningKey] = true;
-        console.error(
-          '%s a style property during rerender (%s) when a ' +
-            'conflicting property is set (%s) can lead to styling bugs. To ' +
-            "avoid this, don't mix shorthand and non-shorthand properties " +
-            'for the same value; instead, replace the shorthand with ' +
-            'separate values.',
-          isValueEmpty(styleUpdates[originalKey]) ? 'Removing' : 'Updating',
-          originalKey,
-          correctOriginalKey,
-        );
-      }
-    }
-  }
-}
+
+export function validateShorthandPropertyCollisionInDev(styleUpdates, nextStyles) {}

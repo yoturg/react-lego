@@ -10,7 +10,7 @@
 /**
  * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
  */
-const supportedInputTypes                                    = {
+const supportedInputTypes = {
   color: true,
   date: true,
   datetime: true,
@@ -25,14 +25,14 @@ const supportedInputTypes                                    = {
   text: true,
   time: true,
   url: true,
-  week: true,
+  week: true
 };
 
-function isTextInputElement(elem              )          {
+function isTextInputElement(elem) {
   const nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
 
   if (nodeName === 'input') {
-    return !!supportedInputTypes[((elem     )                  ).type];
+    return !!supportedInputTypes[elem.type];
   }
 
   if (nodeName === 'textarea') {

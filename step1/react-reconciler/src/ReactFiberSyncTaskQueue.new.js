@@ -6,21 +6,12 @@
  *
  *      
  */
-
-                                                   
-
-import {
-  DiscreteEventPriority,
-  getCurrentUpdatePriority,
-  setCurrentUpdatePriority,
-} from './ReactEventPriorities.new';
-import {ImmediatePriority, scheduleCallback} from './Scheduler';
-
-let syncQueue                                  = null;
-let includesLegacySyncCallbacks          = false;
-let isFlushingSyncQueue          = false;
-
-export function scheduleSyncCallback(callback                   ) {
+import { DiscreteEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority } from './ReactEventPriorities.new';
+import { ImmediatePriority, scheduleCallback } from './Scheduler';
+let syncQueue = null;
+let includesLegacySyncCallbacks = false;
+let isFlushingSyncQueue = false;
+export function scheduleSyncCallback(callback) {
   // Push this callback into an internal queue. We'll flush these either in
   // the next tick, or earlier if something calls `flushSyncCallbackQueue`.
   if (syncQueue === null) {
@@ -31,12 +22,10 @@ export function scheduleSyncCallback(callback                   ) {
     syncQueue.push(callback);
   }
 }
-
-export function scheduleLegacySyncCallback(callback                   ) {
+export function scheduleLegacySyncCallback(callback) {
   includesLegacySyncCallbacks = true;
   scheduleSyncCallback(callback);
 }
-
 export function flushSyncCallbacksOnlyInLegacyMode() {
   // Only flushes the queue if there's a legacy sync callback scheduled.
   // TODO: There's only a single type of callback: performSyncOnWorkOnRoot. So
@@ -47,33 +36,37 @@ export function flushSyncCallbacksOnlyInLegacyMode() {
     flushSyncCallbacks();
   }
 }
-
 export function flushSyncCallbacks() {
   if (!isFlushingSyncQueue && syncQueue !== null) {
     // Prevent re-entrance.
     isFlushingSyncQueue = true;
     let i = 0;
     const previousUpdatePriority = getCurrentUpdatePriority();
+
     try {
       const isSync = true;
-      const queue = syncQueue;
-      // TODO: Is this necessary anymore? The only user code that runs in this
+      const queue = syncQueue; // TODO: Is this necessary anymore? The only user code that runs in this
       // queue is in the render or commit phases.
+
       setCurrentUpdatePriority(DiscreteEventPriority);
+
       for (; i < queue.length; i++) {
         let callback = queue[i];
+
         do {
           callback = callback(isSync);
         } while (callback !== null);
       }
+
       syncQueue = null;
       includesLegacySyncCallbacks = false;
     } catch (error) {
       // If something throws, leave the remaining callbacks on the queue.
       if (syncQueue !== null) {
         syncQueue = syncQueue.slice(i + 1);
-      }
-      // Resume flushing in the next tick
+      } // Resume flushing in the next tick
+
+
       scheduleCallback(ImmediatePriority, flushSyncCallbacks);
       throw error;
     } finally {
@@ -81,5 +74,6 @@ export function flushSyncCallbacks() {
       isFlushingSyncQueue = false;
     }
   }
+
   return null;
 }

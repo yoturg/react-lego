@@ -6,67 +6,24 @@
  *
  *      
  */
-
 const EventListenerWWW = require('EventListener');
 
-                                                             
-                                                                    
-
-export function addEventBubbleListener(
-  target             ,
-  eventType        ,
-  listener          ,
-) {
+export function addEventBubbleListener(target, eventType, listener) {
   return EventListenerWWW.listen(target, eventType, listener);
 }
-
-export function addEventCaptureListener(
-  target             ,
-  eventType        ,
-  listener          ,
-) {
+export function addEventCaptureListener(target, eventType, listener) {
   return EventListenerWWW.capture(target, eventType, listener);
 }
-
-export function addEventCaptureListenerWithPassiveFlag(
-  target             ,
-  eventType        ,
-  listener          ,
-  passive         ,
-) {
-  return EventListenerWWW.captureWithPassiveFlag(
-    target,
-    eventType,
-    listener,
-    passive,
-  );
+export function addEventCaptureListenerWithPassiveFlag(target, eventType, listener, passive) {
+  return EventListenerWWW.captureWithPassiveFlag(target, eventType, listener, passive);
 }
-
-export function addEventBubbleListenerWithPassiveFlag(
-  target             ,
-  eventType        ,
-  listener          ,
-  passive         ,
-) {
-  return EventListenerWWW.bubbleWithPassiveFlag(
-    target,
-    eventType,
-    listener,
-    passive,
-  );
+export function addEventBubbleListenerWithPassiveFlag(target, eventType, listener, passive) {
+  return EventListenerWWW.bubbleWithPassiveFlag(target, eventType, listener, passive);
 }
-
-export function removeEventListener(
-  target             ,
-  eventType        ,
-  listener          ,
-  capture         ,
-) {
+export function removeEventListener(target, eventType, listener, capture) {
   listener.remove();
-}
-
-// Flow magic to verify the exports of this file match the original version.
+} // Flow magic to verify the exports of this file match the original version.
 // eslint-disable-next-line no-unused-vars
-                                        
 // eslint-disable-next-line no-unused-expressions
-(null                                                 );
+
+null;

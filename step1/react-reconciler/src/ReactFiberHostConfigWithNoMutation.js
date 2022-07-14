@@ -6,19 +6,13 @@
  *
  *      
  */
-
 // Renderers that don't support mutation
 // can re-export everything from this module.
+function shim(...args) {
+  throw new Error('The current renderer does not support mutation. ' + 'This error is likely caused by a bug in React. ' + 'Please file an issue.');
+} // Mutation (when unsupported)
 
-function shim(...args     ) {
-  throw new Error(
-    'The current renderer does not support mutation. ' +
-      'This error is likely caused by a bug in React. ' +
-      'Please file an issue.',
-  );
-}
 
-// Mutation (when unsupported)
 export const supportsMutation = false;
 export const appendChild = shim;
 export const appendChildToContainer = shim;

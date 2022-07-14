@@ -6,11 +6,4 @@
  *
  *      
  */
-
-export {
-  renderToString,
-  renderToStaticMarkup,
-  renderToNodeStream,
-  renderToStaticNodeStream,
-  version,
-} from './ReactDOMServerLegacyPartialRendererBrowser';
+export { renderToString, renderToStaticMarkup, renderToNodeStream, renderToStaticNodeStream, version } from './ReactDOMServerLegacyPartialRendererBrowser';

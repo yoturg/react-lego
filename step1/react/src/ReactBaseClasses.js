@@ -4,30 +4,24 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import ReactNoopUpdateQueue from './ReactNoopUpdateQueue';
 import assign from 'shared/assign';
-
 const emptyObject = {};
-if (__DEV__) {
-  Object.freeze(emptyObject);
-}
 
 /**
  * Base class helpers for the updating state of a component.
  */
 function Component(props, context, updater) {
   this.props = props;
-  this.context = context;
-  // If a component has string refs, we will assign a different object later.
-  this.refs = emptyObject;
-  // We initialize the default updater but the real one gets injected by the
+  this.context = context; // If a component has string refs, we will assign a different object later.
+
+  this.refs = emptyObject; // We initialize the default updater but the real one gets injected by the
   // renderer.
+
   this.updater = updater || ReactNoopUpdateQueue;
 }
 
 Component.prototype.isReactComponent = {};
-
 /**
  * Sets a subset of the state. Always use this to mutate
  * state. You should treat `this.state` as immutable.
@@ -53,21 +47,14 @@ Component.prototype.isReactComponent = {};
  * @final
  * @protected
  */
-Component.prototype.setState = function(partialState, callback) {
-  if (
-    typeof partialState !== 'object' &&
-    typeof partialState !== 'function' &&
-    partialState != null
-  ) {
-    throw new Error(
-      'setState(...): takes an object of state variables to update or a ' +
-        'function which returns an object of state variables.',
-    );
+
+Component.prototype.setState = function (partialState, callback) {
+  if (typeof partialState !== 'object' && typeof partialState !== 'function' && partialState != null) {
+    throw new Error('setState(...): takes an object of state variables to update or a ' + 'function which returns an object of state variables.');
   }
 
   this.updater.enqueueSetState(this, partialState, callback, 'setState');
 };
-
 /**
  * Forces an update. This should only be invoked when it is known with
  * certainty that we are **not** in a DOM transaction.
@@ -82,65 +69,36 @@ Component.prototype.setState = function(partialState, callback) {
  * @final
  * @protected
  */
-Component.prototype.forceUpdate = function(callback) {
+
+
+Component.prototype.forceUpdate = function (callback) {
   this.updater.enqueueForceUpdate(this, callback, 'forceUpdate');
 };
-
 /**
  * Deprecated APIs. These APIs used to exist on classic React classes but since
  * we would like to deprecate them, we're not going to move them over to this
  * modern base class. Instead, we define a getter that warns if it's accessed.
  */
-if (__DEV__) {
-  const deprecatedAPIs = {
-    isMounted: [
-      'isMounted',
-      'Instead, make sure to clean up subscriptions and pending requests in ' +
-        'componentWillUnmount to prevent memory leaks.',
-    ],
-    replaceState: [
-      'replaceState',
-      'Refactor your code to use setState instead (see ' +
-        'https://github.com/facebook/react/issues/3236).',
-    ],
-  };
-  const defineDeprecationWarning = function(methodName, info) {
-    Object.defineProperty(Component.prototype, methodName, {
-      get: function() {
-        console.warn(
-          '%s(...) is deprecated in plain JavaScript React classes. %s',
-          info[0],
-          info[1],
-        );
-        return undefined;
-      },
-    });
-  };
-  for (const fnName in deprecatedAPIs) {
-    if (deprecatedAPIs.hasOwnProperty(fnName)) {
-      defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
-    }
-  }
-}
+
 
 function ComponentDummy() {}
-ComponentDummy.prototype = Component.prototype;
 
+ComponentDummy.prototype = Component.prototype;
 /**
  * Convenience component with default shallow equality check for sCU.
  */
+
 function PureComponent(props, context, updater) {
   this.props = props;
-  this.context = context;
-  // If a component has string refs, we will assign a different object later.
+  this.context = context; // If a component has string refs, we will assign a different object later.
+
   this.refs = emptyObject;
   this.updater = updater || ReactNoopUpdateQueue;
 }
 
-const pureComponentPrototype = (PureComponent.prototype = new ComponentDummy());
-pureComponentPrototype.constructor = PureComponent;
-// Avoid an extra prototype jump for these methods.
+const pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
+pureComponentPrototype.constructor = PureComponent; // Avoid an extra prototype jump for these methods.
+
 assign(pureComponentPrototype, Component.prototype);
 pureComponentPrototype.isPureReactComponent = true;
-
-export {Component, PureComponent};
+export { Component, PureComponent };

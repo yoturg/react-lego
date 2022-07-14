@@ -6,5 +6,4 @@
  *
  *      
  */
-
-export {prerender, version} from './src/server/ReactDOMFizzStaticBrowser';
+export { prerender, version } from './src/server/ReactDOMFizzStaticBrowser';

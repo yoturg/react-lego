@@ -6,13 +6,9 @@
  *
  *      
  */
+const isArrayImpl = Array.isArray; // eslint-disable-next-line no-redeclare
 
-                                                                      
-
-const isArrayImpl = Array.isArray;
-
-// eslint-disable-next-line no-redeclare
-function isArray(a       )          {
+function isArray(a) {
   return isArrayImpl(a);
 }
 

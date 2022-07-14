@@ -6,19 +6,10 @@
  *
  *      
  */
-
-import {
-  BOOLEAN,
-  OVERLOADED_BOOLEAN,
-  getPropertyInfo,
-  isAttributeNameSafe,
-  shouldIgnoreAttribute,
-  shouldRemoveAttribute,
-} from '../shared/DOMProperty';
+import { BOOLEAN, OVERLOADED_BOOLEAN, getPropertyInfo, isAttributeNameSafe, shouldIgnoreAttribute, shouldRemoveAttribute } from '../shared/DOMProperty';
 import sanitizeURL from '../shared/sanitizeURL';
-import {checkAttributeStringCoercion} from 'shared/CheckStringCoercion';
+import { checkAttributeStringCoercion } from 'shared/CheckStringCoercion';
 import quoteAttributeValueForBrowser from './quoteAttributeValueForBrowser';
-
 /**
  * Operations for dealing with DOM properties.
  */
@@ -30,35 +21,40 @@ import quoteAttributeValueForBrowser from './quoteAttributeValueForBrowser';
  * @param {*} value
  * @return {?string} Markup string, or null if the property was invalid.
  */
-export function createMarkupForProperty(name        , value       )         {
+
+export function createMarkupForProperty(name, value) {
   const propertyInfo = getPropertyInfo(name);
+
   if (name !== 'style' && shouldIgnoreAttribute(name, propertyInfo, false)) {
     return '';
   }
+
   if (shouldRemoveAttribute(name, value, propertyInfo, false)) {
     return '';
   }
+
   if (propertyInfo !== null) {
     const attributeName = propertyInfo.attributeName;
-    const {type} = propertyInfo;
-    if (type === BOOLEAN || (type === OVERLOADED_BOOLEAN && value === true)) {
+    const {
+      type
+    } = propertyInfo;
+
+    if (type === BOOLEAN || type === OVERLOADED_BOOLEAN && value === true) {
       return attributeName + '=""';
     } else {
       if (propertyInfo.sanitizeURL) {
-        if (__DEV__) {
-          checkAttributeStringCoercion(value, attributeName);
-        }
-        value = '' + (value     );
+        value = '' + value;
         sanitizeURL(value);
       }
+
       return attributeName + '=' + quoteAttributeValueForBrowser(value);
     }
   } else if (isAttributeNameSafe(name)) {
     return name + '=' + quoteAttributeValueForBrowser(value);
   }
+
   return '';
 }
-
 /**
  * Creates markup for a custom property.
  *
@@ -66,17 +62,11 @@ export function createMarkupForProperty(name        , value       )         {
  * @param {*} value
  * @return {string} Markup string, or empty string if the property was invalid.
  */
-export function createMarkupForCustomAttribute(
-  name        ,
-  value       ,
-)         {
-  if (
-    !isAttributeNameSafe(name) ||
-    value == null ||
-    typeof value === 'function' ||
-    typeof value === 'symbol'
-  ) {
+
+export function createMarkupForCustomAttribute(name, value) {
+  if (!isAttributeNameSafe(name) || value == null || typeof value === 'function' || typeof value === 'symbol') {
     return '';
   }
+
   return name + '=' + quoteAttributeValueForBrowser(value);
 }

@@ -16,23 +16,19 @@
  *
  *
  */
-
 let root = null;
 let startText = null;
 let fallbackText = null;
-
 export function initialize(nativeEventTarget) {
   root = nativeEventTarget;
   startText = getText();
   return true;
 }
-
 export function reset() {
   root = null;
   startText = null;
   fallbackText = null;
 }
-
 export function getData() {
   if (fallbackText) {
     return fallbackText;
@@ -52,6 +48,7 @@ export function getData() {
   }
 
   const minEnd = startLength - start;
+
   for (end = 1; end <= minEnd; end++) {
     if (startValue[startLength - end] !== endValue[endLength - end]) {
       break;
@@ -62,10 +59,10 @@ export function getData() {
   fallbackText = endValue.slice(start, sliceTail);
   return fallbackText;
 }
-
 export function getText() {
   if ('value' in root) {
     return root.value;
   }
+
   return root.textContent;
 }

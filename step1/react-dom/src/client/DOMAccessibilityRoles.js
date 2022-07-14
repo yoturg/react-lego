@@ -6,9 +6,7 @@
  *
  *      
  */
-
 // Below code forked from dom-accessibility-api
-
 const tagToRoleMappings = {
   ARTICLE: 'article',
   ASIDE: 'complementary',
@@ -56,11 +54,12 @@ const tagToRoleMappings = {
   TH: 'columnheader',
   THEAD: 'rowgroup',
   TR: 'row',
-  UL: 'list',
+  UL: 'list'
 };
 
-function getImplicitRole(element         )                {
+function getImplicitRole(element) {
   const mappedByTag = tagToRoleMappings[element.tagName];
+
   if (mappedByTag !== undefined) {
     return mappedByTag;
   }
@@ -72,65 +71,81 @@ function getImplicitRole(element         )                {
       if (element.hasAttribute('href')) {
         return 'link';
       }
+
       break;
+
     case 'IMG':
       if ((element.getAttribute('alt') || '').length > 0) {
         return 'img';
       }
+
       break;
-    case 'INPUT': {
-      const type = (element     ).type;
-      switch (type) {
-        case 'button':
-        case 'image':
-        case 'reset':
-        case 'submit':
-          return 'button';
-        case 'checkbox':
-        case 'radio':
-          return type;
-        case 'range':
-          return 'slider';
-        case 'email':
-        case 'tel':
-        case 'text':
-        case 'url':
-          if (element.hasAttribute('list')) {
-            return 'combobox';
-          }
-          return 'textbox';
-        case 'search':
-          if (element.hasAttribute('list')) {
-            return 'combobox';
-          }
-          return 'searchbox';
-        default:
-          return null;
+
+    case 'INPUT':
+      {
+        const type = element.type;
+
+        switch (type) {
+          case 'button':
+          case 'image':
+          case 'reset':
+          case 'submit':
+            return 'button';
+
+          case 'checkbox':
+          case 'radio':
+            return type;
+
+          case 'range':
+            return 'slider';
+
+          case 'email':
+          case 'tel':
+          case 'text':
+          case 'url':
+            if (element.hasAttribute('list')) {
+              return 'combobox';
+            }
+
+            return 'textbox';
+
+          case 'search':
+            if (element.hasAttribute('list')) {
+              return 'combobox';
+            }
+
+            return 'searchbox';
+
+          default:
+            return null;
+        }
       }
-    }
 
     case 'SELECT':
-      if (element.hasAttribute('multiple') || (element     ).size > 1) {
+      if (element.hasAttribute('multiple') || element.size > 1) {
         return 'listbox';
       }
+
       return 'combobox';
   }
 
   return null;
 }
 
-function getExplicitRoles(element         )                       {
+function getExplicitRoles(element) {
   const role = element.getAttribute('role');
+
   if (role) {
     return role.trim().split(' ');
   }
 
   return null;
-}
+} // https://w3c.github.io/html-aria/#document-conformance-requirements-for-use-of-aria-attributes-in-html
 
-// https://w3c.github.io/html-aria/#document-conformance-requirements-for-use-of-aria-attributes-in-html
-export function hasRole(element         , role        )          {
+
+export function hasRole(element, role) {
   const explicitRoles = getExplicitRoles(element);
+
   if (explicitRoles !== null && explicitRoles.indexOf(role) >= 0) {
     return true;
   }

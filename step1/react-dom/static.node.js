@@ -6,8 +6,4 @@
  *
  *      
  */
-
-export {
-  prerenderToNodeStreams,
-  version,
-} from './src/server/ReactDOMFizzStaticNode';
+export { prerenderToNodeStreams, version } from './src/server/ReactDOMFizzStaticNode';

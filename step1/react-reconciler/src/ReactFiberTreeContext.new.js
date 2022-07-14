@@ -6,10 +6,8 @@
  *
  *      
  */
-
 // Ids are base 32 strings whose binary representation corresponds to the
 // position of a node in a tree.
-
 // Every time the tree forks into multiple children, we add additional bits to
 // the left of the sequence that represent the position of the child within the
 // current level of children.
@@ -59,52 +57,37 @@
 // because every log2(base) bits corresponds to a single character, i.e. every
 // log2(32) = 5 bits. That means we can lop bits off the end 5 at a time without
 // affecting the final result.
-
-import {getIsHydrating} from './ReactFiberHydrationContext.new';
-import {clz32} from './clz32';
-import {Forked, NoFlags} from './ReactFiberFlags';
-
-                           
-             
-                   
-  
-
-// TODO: Use the unified fiber stack module instead of this local one?
+import { getIsHydrating } from './ReactFiberHydrationContext.new';
+import { clz32 } from './clz32';
+import { Forked, NoFlags } from './ReactFiberFlags'; // TODO: Use the unified fiber stack module instead of this local one?
 // Intentionally not using it yet to derisk the initial implementation, because
 // the way we push/pop these values is a bit unusual. If there's a mistake, I'd
 // rather the ids be wrong than crash the whole reconciler.
-const forkStack             = [];
-let forkStackIndex         = 0;
-let treeForkProvider               = null;
-let treeForkCount         = 0;
 
-const idStack             = [];
-let idStackIndex         = 0;
-let treeContextProvider               = null;
-let treeContextId         = 1;
-let treeContextOverflow         = '';
-
-export function isForkedChild(workInProgress       )          {
+const forkStack = [];
+let forkStackIndex = 0;
+let treeForkProvider = null;
+let treeForkCount = 0;
+const idStack = [];
+let idStackIndex = 0;
+let treeContextProvider = null;
+let treeContextId = 1;
+let treeContextOverflow = '';
+export function isForkedChild(workInProgress) {
   warnIfNotHydrating();
   return (workInProgress.flags & Forked) !== NoFlags;
 }
-
-export function getForksAtLevel(workInProgress       )         {
+export function getForksAtLevel(workInProgress) {
   warnIfNotHydrating();
   return treeForkCount;
 }
-
-export function getTreeId()         {
+export function getTreeId() {
   const overflow = treeContextOverflow;
   const idWithLeadingBit = treeContextId;
   const id = idWithLeadingBit & ~getLeadingBit(idWithLeadingBit);
   return id.toString(32) + overflow;
 }
-
-export function pushTreeFork(
-  workInProgress       ,
-  totalChildren        ,
-)       {
+export function pushTreeFork(workInProgress, totalChildren) {
   // This is called right after we reconcile an array (or iterator) of child
   // fibers, because that's the only place where we know how many children in
   // the whole set without doing extra work later, or storing addtional
@@ -119,42 +102,28 @@ export function pushTreeFork(
   //
   // It might be better to just add a `forks` field to the Fiber type. It would
   // make this module simpler.
-
   warnIfNotHydrating();
-
   forkStack[forkStackIndex++] = treeForkCount;
   forkStack[forkStackIndex++] = treeForkProvider;
-
   treeForkProvider = workInProgress;
   treeForkCount = totalChildren;
 }
-
-export function pushTreeId(
-  workInProgress       ,
-  totalChildren        ,
-  index        ,
-) {
+export function pushTreeId(workInProgress, totalChildren, index) {
   warnIfNotHydrating();
-
   idStack[idStackIndex++] = treeContextId;
   idStack[idStackIndex++] = treeContextOverflow;
   idStack[idStackIndex++] = treeContextProvider;
-
   treeContextProvider = workInProgress;
-
   const baseIdWithLeadingBit = treeContextId;
-  const baseOverflow = treeContextOverflow;
-
-  // The leftmost 1 marks the end of the sequence, non-inclusive. It's not part
+  const baseOverflow = treeContextOverflow; // The leftmost 1 marks the end of the sequence, non-inclusive. It's not part
   // of the id; we use it to account for leading 0s.
+
   const baseLength = getBitLength(baseIdWithLeadingBit) - 1;
   const baseId = baseIdWithLeadingBit & ~(1 << baseLength);
-
   const slot = index + 1;
-  const length = getBitLength(totalChildren) + baseLength;
-
-  // 30 is the max length we can store without overflowing, taking into
+  const length = getBitLength(totalChildren) + baseLength; // 30 is the max length we can store without overflowing, taking into
   // consideration the leading 1 we use to mark the end of the sequence.
+
   if (length > 30) {
     // We overflowed the bitwise-safe range. Fall back to slower algorithm.
     // This branch assumes the length of the base id is greater than 5; it won't
@@ -169,44 +138,37 @@ export function pushTreeId(
     //
     // First calculate how many bits in the base id represent a complete
     // sequence of characters.
-    const numberOfOverflowBits = baseLength - (baseLength % 5);
+    const numberOfOverflowBits = baseLength - baseLength % 5; // Then create a bitmask that selects only those bits.
 
-    // Then create a bitmask that selects only those bits.
-    const newOverflowBits = (1 << numberOfOverflowBits) - 1;
+    const newOverflowBits = (1 << numberOfOverflowBits) - 1; // Select the bits, and convert them to a base 32 string.
 
-    // Select the bits, and convert them to a base 32 string.
-    const newOverflow = (baseId & newOverflowBits).toString(32);
+    const newOverflow = (baseId & newOverflowBits).toString(32); // Now we can remove those bits from the base id.
 
-    // Now we can remove those bits from the base id.
     const restOfBaseId = baseId >> numberOfOverflowBits;
-    const restOfBaseLength = baseLength - numberOfOverflowBits;
-
-    // Finally, encode the rest of the bits using the normal algorithm. Because
+    const restOfBaseLength = baseLength - numberOfOverflowBits; // Finally, encode the rest of the bits using the normal algorithm. Because
     // we made more room, this time it won't overflow.
+
     const restOfLength = getBitLength(totalChildren) + restOfBaseLength;
     const restOfNewBits = slot << restOfBaseLength;
     const id = restOfNewBits | restOfBaseId;
     const overflow = newOverflow + baseOverflow;
-
-    treeContextId = (1 << restOfLength) | id;
+    treeContextId = 1 << restOfLength | id;
     treeContextOverflow = overflow;
   } else {
     // Normal path
     const newBits = slot << baseLength;
     const id = newBits | baseId;
     const overflow = baseOverflow;
-
-    treeContextId = (1 << length) | id;
+    treeContextId = 1 << length | id;
     treeContextOverflow = overflow;
   }
 }
-
-export function pushMaterializedTreeId(workInProgress       ) {
-  warnIfNotHydrating();
-
-  // This component materialized an id. This will affect any ids that appear
+export function pushMaterializedTreeId(workInProgress) {
+  warnIfNotHydrating(); // This component materialized an id. This will affect any ids that appear
   // in its children.
+
   const returnFiber = workInProgress.return;
+
   if (returnFiber !== null) {
     const numberOfForks = 1;
     const slotIndex = 0;
@@ -215,22 +177,20 @@ export function pushMaterializedTreeId(workInProgress       ) {
   }
 }
 
-function getBitLength(number        )         {
+function getBitLength(number) {
   return 32 - clz32(number);
 }
 
-function getLeadingBit(id        ) {
-  return 1 << (getBitLength(id) - 1);
+function getLeadingBit(id) {
+  return 1 << getBitLength(id) - 1;
 }
 
-export function popTreeContext(workInProgress       ) {
+export function popTreeContext(workInProgress) {
   // Restore the previous values.
-
   // This is a bit more complicated than other context-like modules in Fiber
   // because the same Fiber may appear on the stack multiple times and for
   // different reasons. We have to keep popping until the work-in-progress is
   // no longer at the top of the stack.
-
   while (workInProgress === treeForkProvider) {
     treeForkProvider = forkStack[--forkStackIndex];
     forkStack[forkStackIndex] = null;
@@ -247,41 +207,26 @@ export function popTreeContext(workInProgress       ) {
     idStack[idStackIndex] = null;
   }
 }
-
-export function getSuspendedTreeContext()                     {
+export function getSuspendedTreeContext() {
   warnIfNotHydrating();
+
   if (treeContextProvider !== null) {
     return {
       id: treeContextId,
-      overflow: treeContextOverflow,
+      overflow: treeContextOverflow
     };
   } else {
     return null;
   }
 }
-
-export function restoreSuspendedTreeContext(
-  workInProgress       ,
-  suspendedContext             ,
-) {
+export function restoreSuspendedTreeContext(workInProgress, suspendedContext) {
   warnIfNotHydrating();
-
   idStack[idStackIndex++] = treeContextId;
   idStack[idStackIndex++] = treeContextOverflow;
   idStack[idStackIndex++] = treeContextProvider;
-
   treeContextId = suspendedContext.id;
   treeContextOverflow = suspendedContext.overflow;
   treeContextProvider = workInProgress;
 }
 
-function warnIfNotHydrating() {
-  if (__DEV__) {
-    if (!getIsHydrating()) {
-      console.error(
-        'Expected to be hydrating. This is a bug in React. Please file ' +
-          'an issue.',
-      );
-    }
-  }
-}
+function warnIfNotHydrating() {}

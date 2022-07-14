@@ -44,7 +44,6 @@ export const isUnitlessNumber = {
   widows: true,
   zIndex: true,
   zoom: true,
-
   // SVG-related properties
   fillOpacity: true,
   floodOpacity: true,
@@ -53,29 +52,29 @@ export const isUnitlessNumber = {
   strokeDashoffset: true,
   strokeMiterlimit: true,
   strokeOpacity: true,
-  strokeWidth: true,
+  strokeWidth: true
 };
-
 /**
  * @param {string} prefix vendor-specific prefix, eg: Webkit
  * @param {string} key style name, eg: transitionDuration
  * @return {string} style name prefixed with `prefix`, properly camelCased, eg:
  * WebkitTransitionDuration
  */
+
 function prefixKey(prefix, key) {
   return prefix + key.charAt(0).toUpperCase() + key.substring(1);
 }
-
 /**
  * Support style names that may come passed in prefixed by adding permutations
  * of vendor prefixes.
  */
-const prefixes = ['Webkit', 'ms', 'Moz', 'O'];
 
-// Using Object.keys here, or else the vanilla for-in loop makes IE8 go into an
+
+const prefixes = ['Webkit', 'ms', 'Moz', 'O']; // Using Object.keys here, or else the vanilla for-in loop makes IE8 go into an
 // infinite loop, because it iterates over the newly added props too.
-Object.keys(isUnitlessNumber).forEach(function(prop) {
-  prefixes.forEach(function(prefix) {
+
+Object.keys(isUnitlessNumber).forEach(function (prop) {
+  prefixes.forEach(function (prefix) {
     isUnitlessNumber[prefixKey(prefix, prop)] = isUnitlessNumber[prop];
   });
 });

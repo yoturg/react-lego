@@ -6,43 +6,25 @@
  *
  *      
  */
-
-                                                     
-
-                                                              
-
-import {
-  createRequest,
-  startWork,
-  startFlowing,
-  abort,
-} from 'react-server/src/ReactFizzServer';
-
-import {
-  createResponseState,
-  createRootFormatContext,
-} from './ReactDOMServerLegacyFormatConfig';
-
-import {Readable} from 'stream';
-
-                      
-                            
-  
+import { createRequest, startWork, startFlowing, abort } from 'react-server/src/ReactFizzServer';
+import { createResponseState, createRootFormatContext } from './ReactDOMServerLegacyFormatConfig';
+import { Readable } from 'stream';
 
 class ReactMarkupReadableStream extends Readable {
-  request         ;
-  startedFlowing         ;
+  request;
+  startedFlowing;
+
   constructor() {
     // Calls the stream.Readable(options) constructor. Consider exposing built-in
     // features like highWaterMark in the future.
     super({});
-    this.request = (null     );
+    this.request = null;
     this.startedFlowing = false;
   }
 
   _destroy(err, callback) {
-    abort(this.request);
-    // $FlowFixMe: The type definition for the callback should allow undefined and null.
+    abort(this.request); // $FlowFixMe: The type definition for the callback should allow undefined and null.
+
     callback(err);
   }
 
@@ -51,56 +33,33 @@ class ReactMarkupReadableStream extends Readable {
       startFlowing(this.request, this);
     }
   }
+
 }
 
-function onError() {
-  // Non-fatal errors are ignored.
+function onError() {// Non-fatal errors are ignored.
 }
 
-function renderToNodeStreamImpl(
-  children               ,
-  options                      ,
-  generateStaticMarkup         ,
-)           {
+function renderToNodeStreamImpl(children, options, generateStaticMarkup) {
   function onAllReady() {
     // We wait until everything has loaded before starting to write.
     // That way we only end up with fully resolved HTML even if we suspend.
     destination.startedFlowing = true;
     startFlowing(request, destination);
   }
+
   const destination = new ReactMarkupReadableStream();
-  const request = createRequest(
-    children,
-    createResponseState(false, options ? options.identifierPrefix : undefined),
-    createRootFormatContext(),
-    Infinity,
-    onError,
-    onAllReady,
-    undefined,
-    undefined,
-  );
+  const request = createRequest(children, createResponseState(false, options ? options.identifierPrefix : undefined), createRootFormatContext(), Infinity, onError, onAllReady, undefined, undefined);
   destination.request = request;
   startWork(request);
   return destination;
 }
 
-function renderToNodeStream(
-  children               ,
-  options                ,
-)           {
-  if (__DEV__) {
-    console.error(
-      'renderToNodeStream is deprecated. Use renderToPipeableStream instead.',
-    );
-  }
+function renderToNodeStream(children, options) {
   return renderToNodeStreamImpl(children, options, false);
 }
 
-function renderToStaticNodeStream(
-  children               ,
-  options                ,
-)           {
+function renderToStaticNodeStream(children, options) {
   return renderToNodeStreamImpl(children, options, true);
 }
 
-export {renderToNodeStream, renderToStaticNodeStream};
+export { renderToNodeStream, renderToStaticNodeStream };

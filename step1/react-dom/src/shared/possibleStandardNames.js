@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 // When adding attributes to the HTML or SVG allowed attribute list, be sure to
 // also add them to this module to ensure casing and incorrect name
 // warnings.
@@ -159,7 +158,6 @@ const possibleStandardNames = {
   width: 'width',
   wmode: 'wmode',
   wrap: 'wrap',
-
   // SVG
   about: 'about',
   accentheight: 'accentHeight',
@@ -496,7 +494,6 @@ const possibleStandardNames = {
   y: 'y',
   ychannelselector: 'yChannelSelector',
   z: 'z',
-  zoomandpan: 'zoomAndPan',
+  zoomandpan: 'zoomAndPan'
 };
-
 export default possibleStandardNames;

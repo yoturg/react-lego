@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
 export const enableSchedulerDebugging = false;
 export const enableIsInputPending = false;
 export const enableProfiling = false;

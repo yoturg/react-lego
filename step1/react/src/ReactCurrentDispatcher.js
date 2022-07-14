@@ -7,8 +7,6 @@
  *      
  */
 
-                                                                        
-
 /**
  * Keeps track of the current dispatcher.
  */
@@ -17,7 +15,6 @@ const ReactCurrentDispatcher = {
    * @internal
    * @type {ReactComponent}
    */
-  current: (null                   ),
+  current: null
 };
-
 export default ReactCurrentDispatcher;

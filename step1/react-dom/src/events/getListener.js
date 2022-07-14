@@ -5,26 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  *      
  */
+import { getFiberCurrentPropsFromNode } from '../client/ReactDOMComponentTree';
 
-                                                                   
-                                                        
-
-import {getFiberCurrentPropsFromNode} from '../client/ReactDOMComponentTree';
-
-function isInteractive(tag        )          {
-  return (
-    tag === 'button' ||
-    tag === 'input' ||
-    tag === 'select' ||
-    tag === 'textarea'
-  );
+function isInteractive(tag) {
+  return tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea';
 }
 
-function shouldPreventMouseEvent(
-  name        ,
-  type        ,
-  props       ,
-)          {
+function shouldPreventMouseEvent(name, type, props) {
   switch (name) {
     case 'onClick':
     case 'onClickCapture':
@@ -38,39 +25,41 @@ function shouldPreventMouseEvent(
     case 'onMouseUpCapture':
     case 'onMouseEnter':
       return !!(props.disabled && isInteractive(type));
+
     default:
       return false;
   }
 }
-
 /**
  * @param {object} inst The instance, which is the source of events.
  * @param {string} registrationName Name of listener (e.g. `onClick`).
  * @return {?function} The stored callback.
  */
-export default function getListener(
-  inst       ,
-  registrationName        ,
-)                  {
+
+
+export default function getListener(inst, registrationName) {
   const stateNode = inst.stateNode;
+
   if (stateNode === null) {
     // Work in progress (ex: onload events in incremental mode).
     return null;
   }
+
   const props = getFiberCurrentPropsFromNode(stateNode);
+
   if (props === null) {
     // Work in progress.
     return null;
   }
+
   const listener = props[registrationName];
+
   if (shouldPreventMouseEvent(registrationName, inst.type, props)) {
     return null;
   }
 
   if (listener && typeof listener !== 'function') {
-    throw new Error(
-      `Expected \`${registrationName}\` listener to be a function, instead got a value of \`${typeof listener}\` type.`,
-    );
+    throw new Error(`Expected \`${registrationName}\` listener to be a function, instead got a value of \`${typeof listener}\` type.`);
   }
 
   return listener;

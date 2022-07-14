@@ -6,91 +6,50 @@
  *
  *      
  */
-
 // TODO: direct imports like some-package/src/* are bad. Fix me.
-import {getCurrentFiberOwnerNameInDevOrNull} from 'react-reconciler/src/ReactCurrentFiber';
-
-import {checkControlledValueProps} from '../shared/ReactControlledValuePropTypes';
-import {getToStringValue, toString} from './ToStringValue';
+import { getCurrentFiberOwnerNameInDevOrNull } from 'react-reconciler/src/ReactCurrentFiber';
+import { checkControlledValueProps } from '../shared/ReactControlledValuePropTypes';
+import { getToStringValue, toString } from './ToStringValue';
 import assign from 'shared/assign';
 import isArray from 'shared/isArray';
-
 let didWarnValueDefaultValue;
-
-if (__DEV__) {
-  didWarnValueDefaultValue = false;
-}
-
-                                                    
-                                          
-   
 
 function getDeclarationErrorAddendum() {
   const ownerName = getCurrentFiberOwnerNameInDevOrNull();
+
   if (ownerName) {
     return '\n\nCheck the render method of `' + ownerName + '`.';
   }
+
   return '';
 }
 
 const valuePropNames = ['value', 'defaultValue'];
-
 /**
  * Validation function for `value` and `defaultValue`.
  */
-function checkSelectPropTypes(props) {
-  if (__DEV__) {
-    checkControlledValueProps('select', props);
 
-    for (let i = 0; i < valuePropNames.length; i++) {
-      const propName = valuePropNames[i];
-      if (props[propName] == null) {
-        continue;
-      }
-      const propNameIsArray = isArray(props[propName]);
-      if (props.multiple && !propNameIsArray) {
-        console.error(
-          'The `%s` prop supplied to <select> must be an array if ' +
-            '`multiple` is true.%s',
-          propName,
-          getDeclarationErrorAddendum(),
-        );
-      } else if (!props.multiple && propNameIsArray) {
-        console.error(
-          'The `%s` prop supplied to <select> must be a scalar ' +
-            'value if `multiple` is false.%s',
-          propName,
-          getDeclarationErrorAddendum(),
-        );
-      }
-    }
-  }
-}
+function checkSelectPropTypes(props) {}
 
-function updateOptions(
-  node                   ,
-  multiple         ,
-  propValue     ,
-  setDefaultSelected         ,
-) {
-                                                                 
-                                     
-        
-    
-  const options                                 = node.options;
+function updateOptions(node, multiple, propValue, setDefaultSelected) {
+  const options = node.options;
 
   if (multiple) {
-    const selectedValues = (propValue               );
+    const selectedValues = propValue;
     const selectedValue = {};
+
     for (let i = 0; i < selectedValues.length; i++) {
       // Prefix to avoid chaos with special keys.
       selectedValue['$' + selectedValues[i]] = true;
     }
+
     for (let i = 0; i < options.length; i++) {
       const selected = selectedValue.hasOwnProperty('$' + options[i].value);
+
       if (options[i].selected !== selected) {
         options[i].selected = selected;
       }
+
       if (selected && setDefaultSelected) {
         options[i].defaultSelected = true;
       }
@@ -98,26 +57,30 @@ function updateOptions(
   } else {
     // Do not set `select.value` as exact behavior isn't consistent across all
     // browsers for all cases.
-    const selectedValue = toString(getToStringValue((propValue     )));
+    const selectedValue = toString(getToStringValue(propValue));
     let defaultSelected = null;
+
     for (let i = 0; i < options.length; i++) {
       if (options[i].value === selectedValue) {
         options[i].selected = true;
+
         if (setDefaultSelected) {
           options[i].defaultSelected = true;
         }
+
         return;
       }
+
       if (defaultSelected === null && !options[i].disabled) {
         defaultSelected = options[i];
       }
     }
+
     if (defaultSelected !== null) {
       defaultSelected.selected = true;
     }
   }
 }
-
 /**
  * Implements a <select> host component that allows optionally setting the
  * props `value` and `defaultValue`. If `multiple` is false, the prop must be a
@@ -134,57 +97,35 @@ function updateOptions(
  * selected.
  */
 
-export function getHostProps(element         , props        ) {
+
+export function getHostProps(element, props) {
   return assign({}, props, {
-    value: undefined,
+    value: undefined
   });
 }
-
-export function initWrapperState(element         , props        ) {
-  const node = ((element     )                        );
-  if (__DEV__) {
-    checkSelectPropTypes(props);
-  }
-
+export function initWrapperState(element, props) {
+  const node = element;
   node._wrapperState = {
-    wasMultiple: !!props.multiple,
+    wasMultiple: !!props.multiple
   };
-
-  if (__DEV__) {
-    if (
-      props.value !== undefined &&
-      props.defaultValue !== undefined &&
-      !didWarnValueDefaultValue
-    ) {
-      console.error(
-        'Select elements must be either controlled or uncontrolled ' +
-          '(specify either the value prop, or the defaultValue prop, but not ' +
-          'both). Decide between using a controlled or uncontrolled select ' +
-          'element and remove one of these props. More info: ' +
-          'https://reactjs.org/link/controlled-components',
-      );
-      didWarnValueDefaultValue = true;
-    }
-  }
 }
-
-export function postMountWrapper(element         , props        ) {
-  const node = ((element     )                        );
+export function postMountWrapper(element, props) {
+  const node = element;
   node.multiple = !!props.multiple;
   const value = props.value;
+
   if (value != null) {
     updateOptions(node, !!props.multiple, value, false);
   } else if (props.defaultValue != null) {
     updateOptions(node, !!props.multiple, props.defaultValue, true);
   }
 }
-
-export function postUpdateWrapper(element         , props        ) {
-  const node = ((element     )                        );
+export function postUpdateWrapper(element, props) {
+  const node = element;
   const wasMultiple = node._wrapperState.wasMultiple;
   node._wrapperState.wasMultiple = !!props.multiple;
-
   const value = props.value;
+
   if (value != null) {
     updateOptions(node, !!props.multiple, value, false);
   } else if (wasMultiple !== !!props.multiple) {
@@ -197,9 +138,8 @@ export function postUpdateWrapper(element         , props        ) {
     }
   }
 }
-
-export function restoreControlledState(element         , props        ) {
-  const node = ((element     )                        );
+export function restoreControlledState(element, props) {
+  const node = element;
   const value = props.value;
 
   if (value != null) {

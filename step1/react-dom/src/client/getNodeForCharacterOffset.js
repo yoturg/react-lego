@@ -6,22 +6,21 @@
  *
  *      
  */
-
-import {TEXT_NODE} from '../shared/HTMLNodeType';
-
+import { TEXT_NODE } from '../shared/HTMLNodeType';
 /**
  * Given any node return the first leaf node without children.
  *
  * @param {DOMElement|DOMTextNode} node
  * @return {DOMElement|DOMTextNode}
  */
+
 function getLeafNode(node) {
   while (node && node.firstChild) {
     node = node.firstChild;
   }
+
   return node;
 }
-
 /**
  * Get the next sibling within a container. This will walk up the
  * DOM if a node's siblings have been exhausted.
@@ -29,15 +28,17 @@ function getLeafNode(node) {
  * @param {DOMElement|DOMTextNode} node
  * @return {?DOMElement|DOMTextNode}
  */
+
+
 function getSiblingNode(node) {
   while (node) {
     if (node.nextSibling) {
       return node.nextSibling;
     }
+
     node = node.parentNode;
   }
 }
-
 /**
  * Get object describing the nodes which contain characters at offset.
  *
@@ -45,7 +46,9 @@ function getSiblingNode(node) {
  * @param {number} offset
  * @return {?object}
  */
-function getNodeForCharacterOffset(root         , offset        )          {
+
+
+function getNodeForCharacterOffset(root, offset) {
   let node = getLeafNode(root);
   let nodeStart = 0;
   let nodeEnd = 0;
@@ -57,7 +60,7 @@ function getNodeForCharacterOffset(root         , offset        )          {
       if (nodeStart <= offset && nodeEnd >= offset) {
         return {
           node: node,
-          offset: offset - nodeStart,
+          offset: offset - nodeStart
         };
       }
 

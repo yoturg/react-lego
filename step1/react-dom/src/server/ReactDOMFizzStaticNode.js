@@ -6,59 +6,31 @@
  *
  *      
  */
-
-                                                     
-import {Writable, Readable} from 'stream';
-
+import { Writable, Readable } from 'stream';
 import ReactVersion from 'shared/ReactVersion';
+import { createRequest, startWork, startFlowing, abort } from 'react-server/src/ReactFizzServer';
+import { createResponseState, createRootFormatContext } from './ReactDOMServerFormatConfig';
 
-import {
-  createRequest,
-  startWork,
-  startFlowing,
-  abort,
-} from 'react-server/src/ReactFizzServer';
-
-import {
-  createResponseState,
-  createRootFormatContext,
-} from './ReactDOMServerFormatConfig';
-
-                 
-                            
-                        
-                                  
-                                   
-                                   
-                                
-                       
-                                      
-   
-
-                      
-                    
-   
-
-function createFakeWritable(readable)           {
+function createFakeWritable(readable) {
   // The current host config expects a Writable so we create
   // a fake writable for now to push into the Readable.
-  return ({
+  return {
     write(chunk) {
       return readable.push(chunk);
     },
+
     end() {
       readable.push(null);
     },
+
     destroy(error) {
       readable.destroy(error);
-    },
-  }     );
+    }
+
+  };
 }
 
-function prerenderToNodeStreams(
-  children               ,
-  options          ,
-)                        {
+function prerenderToNodeStreams(children, options) {
   return new Promise((resolve, reject) => {
     const onFatalError = reject;
 
@@ -66,47 +38,35 @@ function prerenderToNodeStreams(
       const readable = new Readable({
         read() {
           startFlowing(request, writable);
-        },
+        }
+
       });
       const writable = createFakeWritable(readable);
-
       const result = {
-        prelude: readable,
+        prelude: readable
       };
       resolve(result);
     }
 
-    const request = createRequest(
-      children,
-      createResponseState(
-        options ? options.identifierPrefix : undefined,
-        undefined,
-        options ? options.bootstrapScriptContent : undefined,
-        options ? options.bootstrapScripts : undefined,
-        options ? options.bootstrapModules : undefined,
-      ),
-      createRootFormatContext(options ? options.namespaceURI : undefined),
-      options ? options.progressiveChunkSize : undefined,
-      options ? options.onError : undefined,
-      onAllReady,
-      undefined,
-      undefined,
-      onFatalError,
-    );
+    const request = createRequest(children, createResponseState(options ? options.identifierPrefix : undefined, undefined, options ? options.bootstrapScriptContent : undefined, options ? options.bootstrapScripts : undefined, options ? options.bootstrapModules : undefined), createRootFormatContext(options ? options.namespaceURI : undefined), options ? options.progressiveChunkSize : undefined, options ? options.onError : undefined, onAllReady, undefined, undefined, onFatalError);
+
     if (options && options.signal) {
       const signal = options.signal;
+
       if (signal.aborted) {
-        abort(request, (signal     ).reason);
+        abort(request, signal.reason);
       } else {
         const listener = () => {
-          abort(request, (signal     ).reason);
+          abort(request, signal.reason);
           signal.removeEventListener('abort', listener);
         };
+
         signal.addEventListener('abort', listener);
       }
     }
+
     startWork(request);
   });
 }
 
-export {prerenderToNodeStreams, ReactVersion as version};
+export { prerenderToNodeStreams, ReactVersion as version };
