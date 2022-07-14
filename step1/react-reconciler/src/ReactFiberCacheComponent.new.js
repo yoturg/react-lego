@@ -43,10 +43,10 @@ export const CacheContext = enableCache ? {
   _threadCount: 0,
   _defaultValue: null,
   _globalName: null
-} : null;
-// Creates a new empty Cache instance with a ref-count of 0. The caller is responsible
+} : null; // Creates a new empty Cache instance with a ref-count of 0. The caller is responsible
 // for retaining the cache once it is in use (retainCache), and releasing the cache
 // once it is no longer needed (releaseCache).
+
 export function createCache() {
   if (!enableCache) {
     return null;

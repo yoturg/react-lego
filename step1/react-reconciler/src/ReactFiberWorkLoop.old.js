@@ -1381,9 +1381,8 @@ function renderRootConcurrent(root, lanes) {
 
   resetContextDependencies();
   popDispatcher(prevDispatcher);
-  executionContext = prevExecutionContext;
+  executionContext = prevExecutionContext; // Check if the tree has completed.
 
-  // Check if the tree has completed.
   if (workInProgress !== null) {
     // Still work remaining.
     if (enableSchedulingProfiler) {
@@ -1766,10 +1765,10 @@ function commitRootImpl(root, recoverableErrors, transitions, renderPriorityLeve
     if (isDevToolsPresent) {
       root.memoizedUpdaters.clear();
     }
-  }
-
-  // Always call this before exiting `commitRoot`, to ensure that any
+  } // Always call this before exiting `commitRoot`, to ensure that any
   // additional work on this root is scheduled.
+
+
   ensureRootIsScheduled(root, now());
 
   if (recoverableErrors !== null) {
@@ -1968,9 +1967,9 @@ function flushPassiveEffectsImpl() {
       currentPendingTransitionCallbacks = null;
       scheduleCallback(IdleSchedulerPriority, () => processTransitionCallbacks(prevPendingTransitionCallbacks, endTime, prevRootTransitionCallbacks));
     }
-  }
+  } // TODO: Move to commitPassiveMountEffects
 
-  // TODO: Move to commitPassiveMountEffects
+
   onPostCommitRootDevTools(root);
 
   if (enableProfilerTimer && enableProfilerCommitHooks) {

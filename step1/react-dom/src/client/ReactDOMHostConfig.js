@@ -418,9 +418,9 @@ export function getSuspenseInstanceFallbackErrorDetails(instance) {
 
   if (dataset) {
     digest = dataset.dgst;
-  }
+  } // Object gets DCE'd if constructed in tail position and matches callsite destructuring
 
-  // Object gets DCE'd if constructed in tail position and matches callsite destructuring
+
   return {
     digest
   }; // let value = {message: undefined, hash: undefined};

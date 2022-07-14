@@ -136,10 +136,10 @@ function updateMemoComponent(current, workInProgress, Component, nextProps, rend
 
     if (isSimpleFunctionComponent(type) && Component.compare === null && // SimpleMemoComponent codepath doesn't resolve outer props either.
     Component.defaultProps === undefined) {
-      let resolvedType = type;
-      // If this is a plain function component without default props,
+      let resolvedType = type; // If this is a plain function component without default props,
       // and with only the default shallow comparison, we upgrade it
       // to a SimpleMemoComponent to allow fast path updates.
+
       workInProgress.tag = SimpleMemoComponent;
       workInProgress.type = resolvedType;
       return updateSimpleMemoComponent(current, workInProgress, resolvedType, nextProps, renderLanes);
@@ -838,10 +838,10 @@ function mountLazyComponent(_current, workInProgress, elementType, renderLanes) 
       }
   }
 
-  let hint = '';
-  // This message intentionally doesn't mention ForwardRef or MemoComponent
+  let hint = ''; // This message intentionally doesn't mention ForwardRef or MemoComponent
   // because the fact that it's a separate type of work is an
   // implementation detail.
+
   throw new Error(`Element type is invalid. Received a promise that resolves to: ${Component}. ` + `Lazy element type must resolve to a class or function.${hint}`);
 }
 

@@ -34,8 +34,8 @@ const {
   ReactCurrentBatchConfig
 } = ReactSharedInternals;
 let didWarnAboutMismatchedHooksForComponent;
-let didWarnUncachedGetSnapshot;
-// These are set right before calling the component.
+let didWarnUncachedGetSnapshot; // These are set right before calling the component.
+
 let renderLanes = NoLanes; // The work-in-progress fiber. I've named it differently to distinguish it from
 // the work-in-progress hook.
 
@@ -136,8 +136,8 @@ export function renderWithHooks(current, workInProgress, Component, props, secon
         throw new Error('Too many re-renders. React limits the number of renders to prevent ' + 'an infinite loop.');
       }
 
-      numberOfReRenders += 1;
-      // Start over from the beginning of the list
+      numberOfReRenders += 1; // Start over from the beginning of the list
+
       currentHook = null;
       workInProgressHook = null;
       workInProgress.updateQueue = null;
@@ -148,9 +148,9 @@ export function renderWithHooks(current, workInProgress, Component, props, secon
   // at the beginning of the render phase and there's no re-entrance.
 
 
-  ReactCurrentDispatcher.current = ContextOnlyDispatcher;
-  // This check uses currentHook so that it works the same in DEV and prod bundles.
+  ReactCurrentDispatcher.current = ContextOnlyDispatcher; // This check uses currentHook so that it works the same in DEV and prod bundles.
   // hookTypesDev could catch more cases (e.g. context) but only in DEV bundles.
+
   const didRenderTooFewHooks = currentHook !== null && currentHook.next !== null;
   renderLanes = NoLanes;
   currentlyRenderingFiber = null;
@@ -759,14 +759,14 @@ function mountSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) {
 
     nextSnapshot = getServerSnapshot();
   } else {
-    nextSnapshot = getSnapshot();
-    // Unless we're rendering a blocking lane, schedule a consistency check.
+    nextSnapshot = getSnapshot(); // Unless we're rendering a blocking lane, schedule a consistency check.
     // Right before committing, we will walk the tree and check if any of the
     // stores were mutated.
     //
     // We won't do this if we're hydrating server-rendered content, because if
     // the content is stale, it's already visible anyway. Instead we'll patch
     // it up in a passive effect.
+
     const root = getWorkInProgressRoot();
 
     if (root === null) {

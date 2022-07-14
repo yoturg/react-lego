@@ -292,10 +292,9 @@ function resolve(child, context, threadID) {
       const componentIdentity = {};
       prepareToUseHooks(componentIdentity);
       inst = Component(element.props, publicContext, updater);
-      inst = finishHooks(Component, element.props, inst, publicContext);
-
-      // If the flag is on, everything is assumed to be a function component.
+      inst = finishHooks(Component, element.props, inst, publicContext); // If the flag is on, everything is assumed to be a function component.
       // Otherwise, we also do the unfortunate dynamic checks.
+
       if (disableModulePatternComponents || inst == null || inst.render == null) {
         child = inst;
         return;
@@ -454,8 +453,8 @@ class ReactDOMServerRenderer {
     const previousValue = context[threadID]; // Remember which value to restore this context to on our way up.
 
     this.contextStack[index] = context;
-    this.contextValueStack[index] = previousValue;
-    // Mutate the current value.
+    this.contextValueStack[index] = previousValue; // Mutate the current value.
+
     context[threadID] = provider.props.value;
   }
 

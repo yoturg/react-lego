@@ -136,9 +136,9 @@ export function describeNativeComponentFrame(fn, construct) {
 
                 if (fn.displayName && frame.includes('<anonymous>')) {
                   frame = frame.replace('<anonymous>', fn.displayName);
-                }
+                } // Return the line we found.
 
-                // Return the line we found.
+
                 return frame;
               }
             } while (s >= 1 && c >= 0);

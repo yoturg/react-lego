@@ -19,10 +19,10 @@ export function logCapturedError(boundary, errorInfo) {
       return;
     }
 
-    const error = errorInfo.value;
-    // In production, we print the error directly.
+    const error = errorInfo.value; // In production, we print the error directly.
     // This will include the message, the JS stack, and anything the browser wants to show.
     // We pass the error object instead of custom message so that the browser displays the error natively.
+
     console['error'](error); // Don't transform to our wrapper
   } catch (e) {
     // This method must not throw, or React internal state will get messed up.

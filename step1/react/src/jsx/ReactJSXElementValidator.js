@@ -27,7 +27,6 @@ const ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
 function setCurrentlyValidatingElement(element) {}
 
 let propTypesMisspellWarningShown;
-
 /**
  * Verifies the object is a ReactElement.
  * See https://reactjs.org/docs/react-api.html#isvalidelement
@@ -35,6 +34,7 @@ let propTypesMisspellWarningShown;
  * @return {boolean} True if `object` is a ReactElement.
  * @final
  */
+
 export function isValidElement(object) {}
 
 function getDeclarationErrorAddendum() {}

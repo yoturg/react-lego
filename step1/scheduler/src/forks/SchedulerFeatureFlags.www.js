@@ -17,4 +17,4 @@ export const {
   continuousYieldMs,
   maxYieldMs
 } = dynamicFeatureFlags;
-export const enableProfiling = __PROFILE__ && enableProfilingFeatureFlag;
+export const enableProfiling = false;

@@ -45,12 +45,12 @@ let warnForPropDifference;
 let warnForExtraAttributes;
 let warnForInvalidEventListener;
 let canDiffStyleForHydrationWarning;
-let normalizeHTML;
-// HTML parsing normalizes CR and CRLF to LF.
+let normalizeHTML; // HTML parsing normalizes CR and CRLF to LF.
 // It also can turn \u0000 into \uFFFD inside attributes.
 // https://www.w3.org/TR/html5/single-page.html#preprocessing-the-input-stream
 // If we have a mismatch, it might be caused by that.
 // We will still patch up in this case but not fire the warning.
+
 const NORMALIZE_NEWLINES_REGEX = /\r\n?/g;
 const NORMALIZE_NULL_AND_REPLACEMENT_REGEX = /\u0000|\uFFFD/g;
 
@@ -225,8 +225,8 @@ export function createTextNode(text, rootContainerElement) {
   return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
 }
 export function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
-  const isCustomComponentTag = isCustomComponent(tag, rawProps);
-  // TODO: Make sure that we check isMounted before firing any of these events.
+  const isCustomComponentTag = isCustomComponent(tag, rawProps); // TODO: Make sure that we check isMounted before firing any of these events.
+
   let props;
 
   switch (tag) {
@@ -551,9 +551,8 @@ function getPossibleStandardName(propName) {
 
 export function diffHydratedProperties(domElement, tag, rawProps, parentNamespace, rootContainerElement, isConcurrentMode, shouldWarnDev) {
   let isCustomComponentTag;
-  let extraAttributeNames;
+  let extraAttributeNames; // TODO: Make sure that we check isMounted before firing any of these events.
 
-  // TODO: Make sure that we check isMounted before firing any of these events.
   switch (tag) {
     case 'dialog':
       listenToNonDelegatedEvent('cancel', domElement);

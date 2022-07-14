@@ -165,7 +165,7 @@ export const warnAboutStringRefs = false; // -----------------------------------
 // Adds user timing marks for e.g. state updates, suspense, and work loop stuff,
 // for an experimental timeline tool.
 
-export const enableSchedulingProfiler = __PROFILE__; // Helps identify side effects in render-phase lifecycle hooks and setState
+export const enableSchedulingProfiler = false; // Helps identify side effects in render-phase lifecycle hooks and setState
 // reducers by double invoking them in StrictLegacyMode.
 
 export const debugRenderPhaseSideEffectsForStrictMode = false; // Helps identify code that is not safe for planned Offscreen API and Suspense semantics;
@@ -176,17 +176,17 @@ export const enableStrictEffects = false; // To preserve the "Pause on caught ex
 
 export const replayFailedUnitOfWorkWithInvokeGuardedCallback = false; // Gather advanced timing metrics for Profiler subtrees.
 
-export const enableProfilerTimer = __PROFILE__; // Record durations for commit and passive effects phases.
+export const enableProfilerTimer = false; // Record durations for commit and passive effects phases.
 
-export const enableProfilerCommitHooks = __PROFILE__; // Phase param passed to onRender callback differentiates between an "update" and a "cascading-update".
+export const enableProfilerCommitHooks = false; // Phase param passed to onRender callback differentiates between an "update" and a "cascading-update".
 
-export const enableProfilerNestedUpdatePhase = __PROFILE__; // Adds verbose console logging for e.g. state updates, suspense, and work loop
+export const enableProfilerNestedUpdatePhase = false; // Adds verbose console logging for e.g. state updates, suspense, and work loop
 // stuff. Intended to enable React core members to more easily debug scheduling
 // issues in DEV builds.
 
 export const enableDebugTracing = false; // Track which Fiber(s) schedule render work.
 
-export const enableUpdaterTracking = __PROFILE__; // Only enabled in RN, related to enableComponentStackLocations
+export const enableUpdaterTracking = false; // Only enabled in RN, related to enableComponentStackLocations
 
 export const disableNativeComponentFrames = false;
 export const enableServerContext = __EXPERIMENTAL__; // Internal only.

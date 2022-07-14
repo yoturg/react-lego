@@ -888,9 +888,9 @@ function ChildReconciler(shouldTrackSideEffects) {
 
     if (typeof newChild === 'string' && newChild !== '' || typeof newChild === 'number') {
       return placeSingleChild(reconcileSingleTextNode(returnFiber, currentFirstChild, '' + newChild, lanes));
-    }
+    } // Remaining cases are all treated as empty.
 
-    // Remaining cases are all treated as empty.
+
     return deleteRemainingChildren(returnFiber, currentFirstChild);
   }
 

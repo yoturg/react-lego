@@ -327,8 +327,8 @@ function throwException(root, returnFiber, sourceFiber, value, rootRenderLanes) 
   if (value !== null && typeof value === 'object' && typeof value.then === 'function') {
     // This is a wakeable. The component suspended.
     const wakeable = value;
-    resetSuspendedComponent(sourceFiber, rootRenderLanes);
-    // Schedule the nearest Suspense to re-render the timed out view.
+    resetSuspendedComponent(sourceFiber, rootRenderLanes); // Schedule the nearest Suspense to re-render the timed out view.
+
     const suspenseBoundary = getNearestSuspenseBoundaryToCapture(returnFiber);
 
     if (suspenseBoundary !== null) {

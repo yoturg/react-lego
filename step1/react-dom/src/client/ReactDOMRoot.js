@@ -108,9 +108,9 @@ export function hydrateRoot(container, initialChildren, options) {
     throw new Error('hydrateRoot(...): Target container is not a DOM element.');
   }
 
-  warnIfReactDOMContainerInDEV(container);
-  // For now we reuse the whole bag of options since they contain
+  warnIfReactDOMContainerInDEV(container); // For now we reuse the whole bag of options since they contain
   // the hydration callbacks.
+
   const hydrationCallbacks = options != null ? options : null; // TODO: Delete this option
 
   const mutableSources = options != null && options.hydratedSources || null;

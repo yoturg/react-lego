@@ -13,8 +13,8 @@ import getComponentNameFromFiber from 'react-reconciler/src/getComponentNameFrom
 import checkPropTypes from 'shared/checkPropTypes';
 import { createCursor, push, pop } from './ReactFiberStack.old';
 let warnedAboutMissingGetChildContext;
-export const emptyContextObject = {};
-// A cursor to the current merged context object on the stack.
+export const emptyContextObject = {}; // A cursor to the current merged context object on the stack.
+
 const contextStackCursor = createCursor(emptyContextObject); // A cursor to a boolean indicating whether the context has changed.
 
 const didPerformWorkStackCursor = createCursor(false); // Keep track of the previous context object that was on the stack.
@@ -73,10 +73,10 @@ function getMaskedContext(workInProgress, unmaskedContext) {
 
     for (const key in contextTypes) {
       context[key] = unmaskedContext[key];
-    }
-
-    // Cache unmasked context so we can avoid recreating masked context unless necessary.
+    } // Cache unmasked context so we can avoid recreating masked context unless necessary.
     // Context is created before the class component is instantiated so check for instance.
+
+
     if (instance) {
       cacheContext(workInProgress, unmaskedContext, context);
     }

@@ -33,16 +33,16 @@ export const {
 
 export const enableStrictEffects = false;
 export const debugRenderPhaseSideEffectsForStrictMode = false;
-export const enableProfilerTimer = __PROFILE__;
-export const enableProfilerCommitHooks = __PROFILE__;
-export const enableProfilerNestedUpdatePhase = __PROFILE__;
-export const enableProfilerNestedUpdateScheduledHook = __PROFILE__ && dynamicFeatureFlags.enableProfilerNestedUpdateScheduledHook;
-export const enableUpdaterTracking = __PROFILE__;
+export const enableProfilerTimer = false;
+export const enableProfilerCommitHooks = false;
+export const enableProfilerNestedUpdatePhase = false;
+export const enableProfilerNestedUpdateScheduledHook = false;
+export const enableUpdaterTracking = false;
 export const enableSuspenseAvoidThisFallback = true;
 export const enableSuspenseAvoidThisFallbackFizz = false;
 export const enableCPUSuspense = true; // Logs additional User Timing API marks for use with an experimental profiling tool.
 
-export const enableSchedulingProfiler = __PROFILE__ && dynamicFeatureFlags.enableSchedulingProfiler; // Note: we'll want to remove this when we to userland implementation.
+export const enableSchedulingProfiler = false; // Note: we'll want to remove this when we to userland implementation.
 // For now, we'll turn it on for everyone because it's *already* on for everyone in practice.
 // At least this will let us stop shipping <Profiler> implementation to all users.
 

@@ -44,8 +44,8 @@ let didWarnAboutInvalidateContextType;
 
 function applyDerivedStateFromProps(workInProgress, ctor, getDerivedStateFromProps, nextProps) {
   const prevState = workInProgress.memoizedState;
-  let partialState = getDerivedStateFromProps(nextProps, prevState);
-  // Merge the partial state and the previous state.
+  let partialState = getDerivedStateFromProps(nextProps, prevState); // Merge the partial state and the previous state.
+
   const memoizedState = partialState === null || partialState === undefined ? prevState : assign({}, prevState, partialState);
   workInProgress.memoizedState = memoizedState; // Once the update queue is empty, persist the derived state onto the
   // base state.
@@ -176,10 +176,9 @@ function constructClassInstance(workInProgress, ctor, props) {
   let instance = new ctor(props, context); // Instantiate twice to help detect side-effects.
 
   const state = workInProgress.memoizedState = instance.state !== null && instance.state !== undefined ? instance.state : null;
-  adoptClassInstance(workInProgress, instance);
-
-  // Cache unmasked context so we can avoid recreating masked context unless necessary.
+  adoptClassInstance(workInProgress, instance); // Cache unmasked context so we can avoid recreating masked context unless necessary.
   // ReactFiberContext usually updates this cache but can't for newly-created instances.
+
   if (isLegacyContextConsumer) {
     cacheContext(workInProgress, unmaskedContext, context);
   }

@@ -25,9 +25,9 @@ import { invokeGuardedCallback, clearCaughtError } from 'shared/ReactErrorUtils'
 import { isDevToolsPresent, markComponentPassiveEffectMountStarted, markComponentPassiveEffectMountStopped, markComponentPassiveEffectUnmountStarted, markComponentPassiveEffectUnmountStopped, markComponentLayoutEffectMountStarted, markComponentLayoutEffectMountStopped, markComponentLayoutEffectUnmountStarted, markComponentLayoutEffectUnmountStopped, onCommitUnmount } from './ReactFiberDevToolsHook.new';
 import { releaseCache, retainCache } from './ReactFiberCacheComponent.new';
 import { clearTransitionsForLanes } from './ReactFiberLane.new';
-let didWarnAboutUndefinedSnapshotBeforeUpdate = null;
-// Used during the commit phase to track the state of the Offscreen component stack.
+let didWarnAboutUndefinedSnapshotBeforeUpdate = null; // Used during the commit phase to track the state of the Offscreen component stack.
 // Allows us to avoid traversing the return path to find the nearest Offscreen ancestor.
+
 let offscreenSubtreeIsHidden = false;
 let offscreenSubtreeWasHidden = false;
 const PossiblyWeakSet = typeof WeakSet === 'function' ? WeakSet : Set;

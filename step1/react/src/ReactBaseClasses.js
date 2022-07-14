@@ -7,10 +7,10 @@
 import ReactNoopUpdateQueue from './ReactNoopUpdateQueue';
 import assign from 'shared/assign';
 const emptyObject = {};
-
 /**
  * Base class helpers for the updating state of a component.
  */
+
 function Component(props, context, updater) {
   this.props = props;
   this.context = context; // If a component has string refs, we will assign a different object later.

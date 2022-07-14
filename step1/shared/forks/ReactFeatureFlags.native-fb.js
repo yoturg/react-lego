@@ -15,12 +15,12 @@
 // export const {} = dynamicFlags;
 // The rest of the flags are static for better dead code elimination.
 export const enableDebugTracing = false;
-export const enableSchedulingProfiler = __PROFILE__;
-export const enableProfilerTimer = __PROFILE__;
-export const enableProfilerCommitHooks = __PROFILE__;
-export const enableProfilerNestedUpdatePhase = __PROFILE__;
+export const enableSchedulingProfiler = false;
+export const enableProfilerTimer = false;
+export const enableProfilerCommitHooks = false;
+export const enableProfilerNestedUpdatePhase = false;
 export const enableProfilerNestedUpdateScheduledHook = false;
-export const enableUpdaterTracking = __PROFILE__;
+export const enableUpdaterTracking = false;
 export const enableCache = false;
 export const enableCacheElement = true;
 export const enableSchedulerDebugging = false;
