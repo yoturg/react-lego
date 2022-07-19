@@ -7,7 +7,7 @@
  *      
  */
 import ReactCurrentBatchConfig from './ReactCurrentBatchConfig';
-import { enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 export function startTransition(scope, options) {
   const prevTransition = ReactCurrentBatchConfig.transition;
   ReactCurrentBatchConfig.transition = {};

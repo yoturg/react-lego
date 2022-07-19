@@ -6,7 +6,7 @@
  *
  *      
  */
-import assign from 'shared/assign';
+import assign from '../../shared/assign';
 export function resolveDefaultProps(Component, baseProps) {
   if (Component && Component.defaultProps) {
     // Resolve default props. Taken from ReactElement

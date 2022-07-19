@@ -6,18 +6,18 @@
  *
  *      
  */
-import { enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay } from 'shared/ReactFeatureFlags';
+import { enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay } from '../../../shared/ReactFeatureFlags';
 import { isDiscreteEventThatRequiresHydration, queueDiscreteEvent, hasQueuedDiscreteEvents, clearIfContinuousEvent, queueIfContinuousEvent, attemptSynchronousHydration } from './ReactDOMEventReplaying';
-import { getNearestMountedFiber, getContainerFromFiber, getSuspenseInstanceFromFiber } from 'react-reconciler.new/src/ReactFiberTreeReflection';
-import { HostRoot, SuspenseComponent } from 'react-reconciler.new/src/ReactWorkTags';
+import { getNearestMountedFiber, getContainerFromFiber, getSuspenseInstanceFromFiber } from '../../../react-reconciler-new/src/ReactFiberTreeReflection';
+import { HostRoot, SuspenseComponent } from '../../../react-reconciler-new/src/ReactWorkTags';
 import { IS_CAPTURE_PHASE } from './EventSystemFlags';
 import getEventTarget from './getEventTarget';
 import { getInstanceFromNode, getClosestInstanceFromNode } from '../client/ReactDOMComponentTree';
 import { dispatchEventForPluginEventSystem } from './DOMPluginEventSystem';
-import { getCurrentPriorityLevel as getCurrentSchedulerPriorityLevel, IdlePriority as IdleSchedulerPriority, ImmediatePriority as ImmediateSchedulerPriority, LowPriority as LowSchedulerPriority, NormalPriority as NormalSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority } from 'react-reconciler.new/src/Scheduler';
-import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority } from 'react-reconciler.new/src/ReactEventPriorities';
-import ReactSharedInternals from 'shared/ReactSharedInternals';
-import { isRootDehydrated } from 'react-reconciler.new/src/ReactFiberShellHydration';
+import { getCurrentPriorityLevel as getCurrentSchedulerPriorityLevel, IdlePriority as IdleSchedulerPriority, ImmediatePriority as ImmediateSchedulerPriority, LowPriority as LowSchedulerPriority, NormalPriority as NormalSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority } from '../../../react-reconciler-new/src/Scheduler';
+import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority } from '../../../react-reconciler-new/src/ReactEventPriorities';
+import ReactSharedInternals from '../../../shared/ReactSharedInternals';
+import { isRootDehydrated } from '../../../react-reconciler-new/src/ReactFiberShellHydration';
 const {
   ReactCurrentBatchConfig
 } = ReactSharedInternals; // TODO: can we stop exporting these?

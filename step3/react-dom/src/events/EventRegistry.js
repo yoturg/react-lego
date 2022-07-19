@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableCreateEventHandleAPI } from 'shared/ReactFeatureFlags';
+import { enableCreateEventHandleAPI } from '../../../shared/ReactFeatureFlags';
 export const allNativeEvents = new Set();
 
 if (enableCreateEventHandleAPI) {

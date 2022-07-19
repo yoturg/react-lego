@@ -6,7 +6,7 @@
  *
  *      
  */
-import { REACT_LAZY_TYPE } from 'shared/ReactSymbols';
+import { REACT_LAZY_TYPE } from '../../shared/ReactSymbols';
 const Uninitialized = -1;
 const Pending = 0;
 const Resolved = 1;

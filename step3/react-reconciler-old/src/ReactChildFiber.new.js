@@ -7,9 +7,9 @@
  *      
  */
 import { Placement, ChildDeletion, Forked } from './ReactFiberFlags';
-import { getIteratorFn, REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE, REACT_PORTAL_TYPE, REACT_LAZY_TYPE } from 'shared/ReactSymbols';
+import { getIteratorFn, REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE, REACT_PORTAL_TYPE, REACT_LAZY_TYPE } from '../../shared/ReactSymbols';
 import { ClassComponent, HostText, HostPortal, Fragment } from './ReactWorkTags';
-import isArray from 'shared/isArray';
+import isArray from '../../shared/isArray';
 import { createWorkInProgress, resetWorkInProgress, createFiberFromElement, createFiberFromFragment, createFiberFromText, createFiberFromPortal } from './ReactFiber.new';
 import { emptyRefsObject } from './ReactFiberClassComponent.new';
 import { getIsHydrating } from './ReactFiberHydrationContext.new';

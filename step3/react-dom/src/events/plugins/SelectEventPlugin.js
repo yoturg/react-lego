@@ -6,10 +6,10 @@
  *
  *      
  */
-import { canUseDOM } from 'shared/ExecutionEnvironment';
+import { canUseDOM } from '../../../../shared/ExecutionEnvironment';
 import { SyntheticEvent } from '../../events/SyntheticEvent';
 import isTextInputElement from '../isTextInputElement';
-import shallowEqual from 'shared/shallowEqual';
+import shallowEqual from '../../../../shared/shallowEqual';
 import { registerTwoPhaseEvent } from '../EventRegistry';
 import getActiveElement from '../../client/getActiveElement';
 import { getNodeFromInstance } from '../../client/ReactDOMComponentTree';

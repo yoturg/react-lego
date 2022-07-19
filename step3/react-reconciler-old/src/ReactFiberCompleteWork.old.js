@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableSuspenseAvoidThisFallback, enableLegacyHidden } from 'shared/ReactFeatureFlags';
+import { enableSuspenseAvoidThisFallback, enableLegacyHidden } from '../../shared/ReactFeatureFlags';
 import { resetWorkInProgressVersions as resetMutableSourceWorkInProgressVersions } from './ReactMutableSource.old';
 import { now } from './Scheduler';
 import { IndeterminateComponent, FunctionComponent, ClassComponent, HostRoot, HostComponent, HostText, HostPortal, ContextProvider, ContextConsumer, ForwardRef, Fragment, Mode, Profiler, SuspenseComponent, SuspenseListComponent, MemoComponent, SimpleMemoComponent, LazyComponent, IncompleteClassComponent, ScopeComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from './ReactWorkTags';
@@ -19,7 +19,7 @@ import { findFirstSuspended } from './ReactFiberSuspenseComponent.old';
 import { isContextProvider as isLegacyContextProvider, popContext as popLegacyContext, popTopLevelContextObject as popTopLevelLegacyContextObject } from './ReactFiberContext.old';
 import { popProvider } from './ReactFiberNewContext.old';
 import { prepareToHydrateHostInstance, prepareToHydrateHostTextInstance, prepareToHydrateHostSuspenseInstance, warnIfUnhydratedTailNodes, popHydrationState, resetHydrationState, getIsHydrating, hasUnhydratedTailNodes, upgradeHydrationErrorsToRecoverable } from './ReactFiberHydrationContext.old';
-import { enableSuspenseCallback, enableScopeAPI, enableProfilerTimer, enableCache, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableSuspenseCallback, enableScopeAPI, enableProfilerTimer, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { renderDidSuspend, renderDidSuspendDelayIfPossible, renderHasNotSuspendedYet, popRenderLanes, getRenderTargetTime, subtreeRenderLanes, getWorkInProgressTransitions } from './ReactFiberWorkLoop.old';
 import { OffscreenLane, SomeRetryLane, NoLanes, includesSomeLane, mergeLanes } from './ReactFiberLane.old';
 import { resetChildFibers } from './ReactChildFiber.old';

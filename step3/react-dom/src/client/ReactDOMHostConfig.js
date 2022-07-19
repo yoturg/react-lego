@@ -17,12 +17,12 @@ import { getChildNamespace } from '../shared/DOMNamespaces';
 import { ELEMENT_NODE, TEXT_NODE, COMMENT_NODE, DOCUMENT_NODE, DOCUMENT_FRAGMENT_NODE } from '../shared/HTMLNodeType';
 import dangerousStyleValue from '../shared/dangerousStyleValue';
 import { retryIfBlockedOn } from '../events/ReactDOMEventReplaying';
-import { enableCreateEventHandleAPI, enableScopeAPI } from 'shared/ReactFeatureFlags';
-import { HostComponent, HostText } from 'react-reconciler.new/src/ReactWorkTags';
+import { enableCreateEventHandleAPI, enableScopeAPI } from '../../../shared/ReactFeatureFlags';
+import { HostComponent, HostText } from '../../../react-reconciler-new/src/ReactWorkTags';
 import { listenToAllSupportedEvents } from '../events/DOMPluginEventSystem';
-import { DefaultEventPriority } from 'react-reconciler.new/src/ReactEventPriorities'; // TODO: Remove this deep import when we delete the legacy root API
+import { DefaultEventPriority } from '../../../react-reconciler-new/src/ReactEventPriorities'; // TODO: Remove this deep import when we delete the legacy root API
 
-import { ConcurrentMode, NoMode } from 'react-reconciler.new/src/ReactTypeOfMode'; // Unused
+import { ConcurrentMode, NoMode } from '../../../react-reconciler-new/src/ReactTypeOfMode'; // Unused
 
 const SUPPRESS_HYDRATION_WARNING = 'suppressHydrationWarning';
 const SUSPENSE_START_DATA = '$';

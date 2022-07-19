@@ -11,10 +11,10 @@
  * used only in DEV and could be replaced by a static type checker for languages
  * that support it.
  */
-import isValidElementType from 'shared/isValidElementType';
-import getComponentNameFromType from 'shared/getComponentNameFromType';
-import { getIteratorFn, REACT_FRAGMENT_TYPE, REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
-import isArray from 'shared/isArray';
+import isValidElementType from '../../shared/isValidElementType';
+import getComponentNameFromType from '../../shared/getComponentNameFromType';
+import { getIteratorFn, REACT_FRAGMENT_TYPE, REACT_ELEMENT_TYPE } from '../../shared/ReactSymbols';
+import isArray from '../../shared/isArray';
 import ReactCurrentOwner from './ReactCurrentOwner';
 import { isValidElement, createElement, cloneElement, jsxDEV } from './ReactElement';
 

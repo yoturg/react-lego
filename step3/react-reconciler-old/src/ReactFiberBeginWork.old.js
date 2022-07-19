@@ -6,13 +6,13 @@
  *
  *      
  */
-import { enableSuspenseAvoidThisFallback, enableCPUSuspense, enableUseMutableSource } from 'shared/ReactFeatureFlags';
+import { enableSuspenseAvoidThisFallback, enableCPUSuspense, enableUseMutableSource } from '../../shared/ReactFeatureFlags';
 import { markComponentRenderStarted, markComponentRenderStopped } from './ReactFiberDevToolsHook.old';
 import { IndeterminateComponent, FunctionComponent, ClassComponent, HostRoot, HostComponent, HostText, HostPortal, ForwardRef, Fragment, Mode, ContextProvider, ContextConsumer, Profiler, SuspenseComponent, SuspenseListComponent, MemoComponent, SimpleMemoComponent, LazyComponent, IncompleteClassComponent, ScopeComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from './ReactWorkTags';
 import { NoFlags, PerformedWork, Placement, Hydrating, ContentReset, DidCapture, Update, Ref, RefStatic, ChildDeletion, ForceUpdateForLegacySuspense, StaticMask, ForceClientRender } from './ReactFiberFlags';
-import ReactSharedInternals from 'shared/ReactSharedInternals';
-import { disableLegacyContext, disableModulePatternComponents, enableProfilerCommitHooks, enableProfilerTimer, enableScopeAPI, enableCache, enableLazyContextPropagation, enableSchedulingProfiler, enableTransitionTracing, enableLegacyHidden } from 'shared/ReactFeatureFlags';
-import shallowEqual from 'shared/shallowEqual';
+import ReactSharedInternals from '../../shared/ReactSharedInternals';
+import { disableLegacyContext, disableModulePatternComponents, enableProfilerCommitHooks, enableProfilerTimer, enableScopeAPI, enableCache, enableLazyContextPropagation, enableSchedulingProfiler, enableTransitionTracing, enableLegacyHidden } from '../../shared/ReactFeatureFlags';
+import shallowEqual from '../../shared/shallowEqual';
 import { mountChildFibers, reconcileChildFibers, cloneChildFibers } from './ReactChildFiber.old';
 import { processUpdateQueue, cloneUpdateQueue, initializeUpdateQueue } from './ReactFiberClassUpdateQueue.old';
 import { NoLane, NoLanes, SyncLane, OffscreenLane, DefaultHydrationLane, SomeRetryLane, NoTimestamp, includesSomeLane, laneToLanes, removeLanes, mergeLanes, getBumpedLaneForHydration } from './ReactFiberLane.old';
@@ -34,7 +34,7 @@ import { enqueueConcurrentRenderForLane } from './ReactFiberConcurrentUpdates.ol
 import { setWorkInProgressVersion } from './ReactMutableSource.old';
 import { pushCacheProvider, CacheContext } from './ReactFiberCacheComponent.old';
 import { createCapturedValue, createCapturedValueAtFiber } from './ReactCapturedValue';
-import is from 'shared/objectIs';
+import is from '../../shared/objectIs';
 import { getForksAtLevel, isForkedChild, pushTreeId, pushMaterializedTreeId } from './ReactFiberTreeContext.old';
 import { requestCacheFromPool, pushRootTransition, getSuspendedCache, pushTransition, getOffscreenDeferredCache, getSuspendedTransitions } from './ReactFiberTransition.old';
 import { pushTracingMarker } from './ReactFiberTracingMarkerComponent.old';

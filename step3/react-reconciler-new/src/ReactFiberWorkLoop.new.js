@@ -6,9 +6,9 @@
  *
  *      
  */
-import { enableCreateEventHandleAPI, enableProfilerTimer, enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableProfilerNestedUpdateScheduledHook, deferRenderPhaseUpdateToNextBatch, enableSchedulingProfiler, disableSchedulerTimeoutInWorkLoop, skipUnmountedBoundaries, enableUpdaterTracking, enableCache, enableTransitionTracing } from 'shared/ReactFeatureFlags';
-import ReactSharedInternals from 'shared/ReactSharedInternals';
-import is from 'shared/objectIs';
+import { enableCreateEventHandleAPI, enableProfilerTimer, enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableProfilerNestedUpdateScheduledHook, deferRenderPhaseUpdateToNextBatch, enableSchedulingProfiler, disableSchedulerTimeoutInWorkLoop, skipUnmountedBoundaries, enableUpdaterTracking, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
+import ReactSharedInternals from '../../shared/ReactSharedInternals';
+import is from '../../shared/objectIs';
 import { // Aliased because `act` will override and push to an internal queue
 scheduleCallback as Scheduler_scheduleCallback, cancelCallback as Scheduler_cancelCallback, shouldYield, requestPaint, now, ImmediatePriority as ImmediateSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority, NormalPriority as NormalSchedulerPriority, IdlePriority as IdleSchedulerPriority } from './Scheduler';
 import { flushSyncCallbacks, flushSyncCallbacksOnlyInLegacyMode, scheduleSyncCallback, scheduleLegacySyncCallback } from './ReactFiberSyncTaskQueue.new';

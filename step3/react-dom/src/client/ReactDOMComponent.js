@@ -20,7 +20,7 @@ import { HTML_NAMESPACE, getIntrinsicNamespace } from '../shared/DOMNamespaces';
 import assertValidProps from '../shared/assertValidProps';
 import { DOCUMENT_NODE } from '../shared/HTMLNodeType';
 import isCustomComponent from '../shared/isCustomComponent';
-import { enableClientRenderFallbackOnTextMismatch } from 'shared/ReactFeatureFlags';
+import { enableClientRenderFallbackOnTextMismatch } from '../../../shared/ReactFeatureFlags';
 import { mediaEventTypes, listenToNonDelegatedEvent } from '../events/DOMPluginEventSystem';
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const SUPPRESS_CONTENT_EDITABLE_WARNING = 'suppressContentEditableWarning';

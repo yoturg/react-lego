@@ -4,9 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
-import assign from 'shared/assign';
-import hasOwnProperty from 'shared/hasOwnProperty';
+import { REACT_ELEMENT_TYPE } from '../../shared/ReactSymbols';
+import assign from '../../shared/assign';
+import hasOwnProperty from '../../shared/hasOwnProperty';
 import ReactCurrentOwner from './ReactCurrentOwner';
 const RESERVED_PROPS = {
   key: true,

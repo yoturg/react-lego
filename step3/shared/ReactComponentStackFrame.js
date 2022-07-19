@@ -6,8 +6,8 @@
  *
  *      
  */
-import { enableComponentStackLocations, disableNativeComponentFrames } from 'shared/ReactFeatureFlags';
-import { REACT_SUSPENSE_TYPE, REACT_SUSPENSE_LIST_TYPE, REACT_FORWARD_REF_TYPE, REACT_MEMO_TYPE, REACT_LAZY_TYPE } from 'shared/ReactSymbols';
+import { enableComponentStackLocations, disableNativeComponentFrames } from '../shared/ReactFeatureFlags';
+import { REACT_SUSPENSE_TYPE, REACT_SUSPENSE_LIST_TYPE, REACT_FORWARD_REF_TYPE, REACT_MEMO_TYPE, REACT_LAZY_TYPE } from '../shared/ReactSymbols';
 let prefix;
 export function describeBuiltInComponentFrame(name, source, ownerFn) {
   if (enableComponentStackLocations) {

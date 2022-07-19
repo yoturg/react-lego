@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { createCursor, push, pop } from './ReactFiberStack.new';
 export function processTransitionCallbacks(pendingTransitions, endTime, callbacks) {
   if (enableTransitionTracing) {

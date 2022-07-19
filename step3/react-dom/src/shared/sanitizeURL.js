@@ -6,7 +6,7 @@
  *
  *      
  */
-import { disableJavaScriptURLs } from 'shared/ReactFeatureFlags'; // A javascript: URL can contain leading C0 control or \u0020 SPACE,
+import { disableJavaScriptURLs } from '../../../shared/ReactFeatureFlags'; // A javascript: URL can contain leading C0 control or \u0020 SPACE,
 // and any newline or tab are filtered out as if they're not part of the URL.
 // https://url.spec.whatwg.org/#url-parsing
 // Tab or newline are defined as \r\n\t:

@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableCache, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { isPrimaryRenderer } from './ReactFiberHostConfig';
 import { createCursor, push, pop } from './ReactFiberStack.old';
 import { getWorkInProgressRoot, getWorkInProgressTransitions } from './ReactFiberWorkLoop.old';

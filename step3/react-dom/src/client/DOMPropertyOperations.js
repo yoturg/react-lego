@@ -8,7 +8,7 @@
  */
 import { getPropertyInfo, shouldIgnoreAttribute, shouldRemoveAttribute, isAttributeNameSafe, BOOLEAN, OVERLOADED_BOOLEAN } from '../shared/DOMProperty';
 import sanitizeURL from '../shared/sanitizeURL';
-import { enableTrustedTypesIntegration, enableCustomElementPropertySupport } from 'shared/ReactFeatureFlags';
+import { enableTrustedTypesIntegration, enableCustomElementPropertySupport } from '../../../shared/ReactFeatureFlags';
 import { getFiberCurrentPropsFromNode } from './ReactDOMComponentTree';
 /**
  * Get the value for a property on a node. Only used in DEV for SSR validation.

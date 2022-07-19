@@ -6,16 +6,16 @@
  *
  *      
  */
-import { enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay } from 'shared/ReactFeatureFlags';
-import { unstable_scheduleCallback as scheduleCallback, unstable_NormalPriority as NormalPriority } from 'scheduler';
-import { getNearestMountedFiber, getContainerFromFiber, getSuspenseInstanceFromFiber } from 'react-reconciler.new/src/ReactFiberTreeReflection';
+import { enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay } from '../../../shared/ReactFeatureFlags';
+import { unstable_scheduleCallback as scheduleCallback, unstable_NormalPriority as NormalPriority } from '../../../scheduler';
+import { getNearestMountedFiber, getContainerFromFiber, getSuspenseInstanceFromFiber } from '../../../react-reconciler-new/src/ReactFiberTreeReflection';
 import { findInstanceBlockingEvent, return_targetInst } from './ReactDOMEventListener';
 import { setReplayingEvent, resetReplayingEvent } from './CurrentReplayingEvent';
 import { dispatchEventForPluginEventSystem } from './DOMPluginEventSystem';
 import { getInstanceFromNode, getClosestInstanceFromNode } from '../client/ReactDOMComponentTree';
-import { HostRoot, SuspenseComponent } from 'react-reconciler.new/src/ReactWorkTags';
-import { isHigherEventPriority } from 'react-reconciler.new/src/ReactEventPriorities';
-import { isRootDehydrated } from 'react-reconciler.new/src/ReactFiberShellHydration';
+import { HostRoot, SuspenseComponent } from '../../../react-reconciler-new/src/ReactWorkTags';
+import { isHigherEventPriority } from '../../../react-reconciler-new/src/ReactEventPriorities';
+import { isRootDehydrated } from '../../../react-reconciler-new/src/ReactFiberShellHydration';
 
 let _attemptSynchronousHydration;
 

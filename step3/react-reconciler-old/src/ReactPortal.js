@@ -6,7 +6,7 @@
  *
  *      
  */
-import { REACT_PORTAL_TYPE } from 'shared/ReactSymbols';
+import { REACT_PORTAL_TYPE } from '../../shared/ReactSymbols';
 export function createPortal(children, containerInfo, // TODO: figure out the API for cross-renderer implementation.
 implementation, key = null) {
   return {

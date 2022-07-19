@@ -6,10 +6,10 @@
  *
  *      
  */
-import { enableCache } from 'shared/ReactFeatureFlags';
-import { REACT_CONTEXT_TYPE } from 'shared/ReactSymbols';
+import { enableCache } from '../../shared/ReactFeatureFlags';
+import { REACT_CONTEXT_TYPE } from '../../shared/ReactSymbols';
 import { pushProvider, popProvider } from './ReactFiberNewContext.old';
-import * as Scheduler from 'scheduler'; // In environments without AbortController (e.g. tests)
+import * as Scheduler from '../../scheduler'; // In environments without AbortController (e.g. tests)
 // replace it with a lightweight shim that only has the features we use.
 
 const AbortControllerLocal = enableCache ? typeof AbortController !== 'undefined' ? AbortController : function AbortControllerShim() {

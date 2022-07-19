@@ -6,7 +6,7 @@
  *
  *      
  */
-import { canUseDOM } from 'shared/ExecutionEnvironment';
+import { canUseDOM } from '../../../shared/ExecutionEnvironment';
 /**
  * Checks if an event is supported in the current execution environment.
  *

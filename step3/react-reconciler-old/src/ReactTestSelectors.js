@@ -6,8 +6,8 @@
  *
  *      
  */
-import { HostComponent, HostText } from 'react-reconciler.new/src/ReactWorkTags';
-import getComponentNameFromType from 'shared/getComponentNameFromType';
+import { HostComponent, HostText } from '../../react-reconciler-new/src/ReactWorkTags';
+import getComponentNameFromType from '../../shared/getComponentNameFromType';
 import { findFiberRoot, getBoundingRect, getInstanceFromNode, getTextContent, isHiddenSubtree, matchAccessibilityRole, setFocusIfFocusable, setupIntersectionObserver, supportsTestSelectors } from './ReactFiberHostConfig';
 let COMPONENT_TYPE = 0b000;
 let HAS_PSEUDO_CLASS_TYPE = 0b001;

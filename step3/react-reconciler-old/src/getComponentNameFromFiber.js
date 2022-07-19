@@ -6,10 +6,10 @@
  *
  *      
  */
-import { enableLegacyHidden } from 'shared/ReactFeatureFlags';
-import { FunctionComponent, ClassComponent, IndeterminateComponent, HostRoot, HostPortal, HostComponent, HostText, Fragment, Mode, ContextConsumer, ContextProvider, ForwardRef, Profiler, SuspenseComponent, MemoComponent, SimpleMemoComponent, LazyComponent, IncompleteClassComponent, DehydratedFragment, SuspenseListComponent, ScopeComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from 'react-reconciler.new/src/ReactWorkTags';
-import getComponentNameFromType from 'shared/getComponentNameFromType';
-import { REACT_STRICT_MODE_TYPE } from 'shared/ReactSymbols'; // Keep in sync with shared/getComponentNameFromType
+import { enableLegacyHidden } from '../../shared/ReactFeatureFlags';
+import { FunctionComponent, ClassComponent, IndeterminateComponent, HostRoot, HostPortal, HostComponent, HostText, Fragment, Mode, ContextConsumer, ContextProvider, ForwardRef, Profiler, SuspenseComponent, MemoComponent, SimpleMemoComponent, LazyComponent, IncompleteClassComponent, DehydratedFragment, SuspenseListComponent, ScopeComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from '../../react-reconciler-new/src/ReactWorkTags';
+import getComponentNameFromType from '../../shared/getComponentNameFromType';
+import { REACT_STRICT_MODE_TYPE } from '../../shared/ReactSymbols'; // Keep in sync with shared/getComponentNameFromType
 
 function getWrappedName(outerType, innerType, wrapperName) {
   const functionName = innerType.displayName || innerType.name || '';

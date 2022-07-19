@@ -9,7 +9,7 @@
 import { noTimeout, supportsHydration } from './ReactFiberHostConfig';
 import { createHostRootFiber } from './ReactFiber.new';
 import { NoLane, NoLanes, NoTimestamp, TotalLanes, createLaneMap } from './ReactFiberLane.new';
-import { enableSuspenseCallback, enableCache, enableProfilerCommitHooks, enableProfilerTimer, enableUpdaterTracking, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableSuspenseCallback, enableCache, enableProfilerCommitHooks, enableProfilerTimer, enableUpdaterTracking, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { initializeUpdateQueue } from './ReactFiberClassUpdateQueue.new';
 import { createCache, retainCache } from './ReactFiberCacheComponent.new';
 

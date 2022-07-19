@@ -6,7 +6,7 @@
  *
  *      
  */
-import { canUseDOM } from 'shared/ExecutionEnvironment';
+import { canUseDOM } from '../../../../shared/ExecutionEnvironment';
 import { registerTwoPhaseEvent } from '../EventRegistry';
 import { getData as FallbackCompositionStateGetData, initialize as FallbackCompositionStateInitialize, reset as FallbackCompositionStateReset } from '../FallbackCompositionState';
 import { SyntheticCompositionEvent, SyntheticInputEvent } from '../SyntheticEvent';

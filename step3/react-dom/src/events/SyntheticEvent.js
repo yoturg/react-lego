@@ -8,7 +8,7 @@
  */
 
 /* eslint valid-typeof: 0 */
-import assign from 'shared/assign';
+import assign from '../../../shared/assign';
 import getEventCharCode from './getEventCharCode';
 
 function functionThatReturnsTrue() {

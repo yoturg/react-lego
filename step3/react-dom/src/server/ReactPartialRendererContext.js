@@ -6,7 +6,7 @@
  *
  *      
  */
-import { disableLegacyContext } from 'shared/ReactFeatureFlags';
+import { disableLegacyContext } from '../../../shared/ReactFeatureFlags';
 export const emptyObject = {};
 
 function maskContext(type, context) {

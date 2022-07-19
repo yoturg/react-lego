@@ -8,7 +8,7 @@
  */
 // TODO: direct imports like some-package/src/* are bad. Fix me.
 import { getToStringValue, toString } from './ToStringValue';
-import assign from 'shared/assign';
+import assign from '../../../shared/assign';
 
 function updateOptions(node, multiple, propValue, setDefaultSelected) {
   const options = node.options;

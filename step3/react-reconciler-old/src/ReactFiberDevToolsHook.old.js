@@ -10,13 +10,13 @@
 // TODO: This import doesn't work because the DevTools depend on the DOM version of React
 // and to properly type check against DOM React we can't also type check again non-DOM
 // React which this hook might be in.
-import { getLabelForLane, TotalLanes } from 'react-reconciler.new/src/ReactFiberLane.old';
+import { getLabelForLane, TotalLanes } from '../../react-reconciler-new/src/ReactFiberLane.old';
 import { DidCapture } from './ReactFiberFlags';
-import { consoleManagedByDevToolsDuringStrictMode, enableProfilerTimer, enableSchedulingProfiler } from 'shared/ReactFeatureFlags';
+import { consoleManagedByDevToolsDuringStrictMode, enableProfilerTimer, enableSchedulingProfiler } from '../../shared/ReactFeatureFlags';
 import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority } from './ReactEventPriorities.old';
 import { ImmediatePriority as ImmediateSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority, NormalPriority as NormalSchedulerPriority, IdlePriority as IdleSchedulerPriority, unstable_yieldValue, unstable_setDisableYieldValue } from './Scheduler';
-import { setSuppressWarning } from 'shared/consoleWithStackDev';
-import { disableLogs, reenableLogs } from 'shared/ConsolePatchingDev';
+import { setSuppressWarning } from '../../shared/consoleWithStackDev';
+import { disableLogs, reenableLogs } from '../../shared/ConsolePatchingDev';
 let rendererID = null;
 let injectedHook = null;
 let injectedProfilingHooks = null;

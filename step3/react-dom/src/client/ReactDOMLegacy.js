@@ -10,9 +10,9 @@ import { markContainerAsRoot, unmarkContainerAsRoot } from './ReactDOMComponentT
 import { listenToAllSupportedEvents } from '../events/DOMPluginEventSystem';
 import { isValidContainerLegacy } from './ReactDOMRoot';
 import { ELEMENT_NODE, COMMENT_NODE } from '../shared/HTMLNodeType';
-import { createContainer, updateContainer, flushSync, getPublicRootInstance, findHostInstance } from 'react-reconciler.new/src/ReactFiberReconciler';
-import { LegacyRoot } from 'react-reconciler.new/src/ReactRootTags';
-import { has as hasInstance } from 'shared/ReactInstanceMap';
+import { createContainer, updateContainer, flushSync, getPublicRootInstance, findHostInstance } from '../../../react-reconciler-new/src/ReactFiberReconciler';
+import { LegacyRoot } from '../../../react-reconciler-new/src/ReactRootTags';
+import { has as hasInstance } from '../../../shared/ReactInstanceMap';
 
 function noopOnRecoverableError() {// This isn't reachable because onRecoverableError isn't called in the
   // legacy API.

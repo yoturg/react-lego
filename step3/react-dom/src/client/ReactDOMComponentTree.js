@@ -6,9 +6,9 @@
  *
  *      
  */
-import { HostComponent, HostText, HostRoot, SuspenseComponent } from 'react-reconciler.new/src/ReactWorkTags';
+import { HostComponent, HostText, HostRoot, SuspenseComponent } from '../../../react-reconciler-new/src/ReactWorkTags';
 import { getParentSuspenseInstance } from './ReactDOMHostConfig';
-import { enableScopeAPI } from 'shared/ReactFeatureFlags';
+import { enableScopeAPI } from '../../../shared/ReactFeatureFlags';
 const randomKey = Math.random().toString(36).slice(2);
 const internalInstanceKey = '__reactFiber$' + randomKey;
 const internalPropsKey = '__reactProps$' + randomKey;

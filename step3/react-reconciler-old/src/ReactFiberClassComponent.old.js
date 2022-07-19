@@ -8,11 +8,11 @@
  */
 import * as React from 'react';
 import { LayoutStatic, Update, Snapshot } from './ReactFiberFlags';
-import { disableLegacyContext, enableSchedulingProfiler, enableLazyContextPropagation } from 'shared/ReactFeatureFlags';
+import { disableLegacyContext, enableSchedulingProfiler, enableLazyContextPropagation } from '../../shared/ReactFeatureFlags';
 import { isMounted } from './ReactFiberTreeReflection';
-import { get as getInstance, set as setInstance } from 'shared/ReactInstanceMap';
-import shallowEqual from 'shared/shallowEqual';
-import assign from 'shared/assign';
+import { get as getInstance, set as setInstance } from '../../shared/ReactInstanceMap';
+import shallowEqual from '../../shared/shallowEqual';
+import assign from '../../shared/assign';
 import { resolveDefaultProps } from './ReactFiberLazyComponent.old';
 import { enqueueUpdate, entangleTransitions, processUpdateQueue, checkHasForceUpdateAfterProcessing, resetHasForceUpdateBeforeProcessing, createUpdate, ReplaceState, ForceUpdate, initializeUpdateQueue, cloneUpdateQueue } from './ReactFiberClassUpdateQueue.old';
 import { NoLanes } from './ReactFiberLane.old';

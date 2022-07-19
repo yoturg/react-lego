@@ -7,11 +7,11 @@
  *      
  */
 import * as React from 'react';
-import isArray from 'shared/isArray';
-import getComponentNameFromType from 'shared/getComponentNameFromType';
-import ReactSharedInternals from 'shared/ReactSharedInternals';
-import { disableLegacyContext, disableModulePatternComponents, enableScopeAPI } from 'shared/ReactFeatureFlags';
-import { REACT_DEBUG_TRACING_MODE_TYPE, REACT_FORWARD_REF_TYPE, REACT_FRAGMENT_TYPE, REACT_STRICT_MODE_TYPE, REACT_SUSPENSE_TYPE, REACT_SUSPENSE_LIST_TYPE, REACT_PORTAL_TYPE, REACT_PROFILER_TYPE, REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE, REACT_LAZY_TYPE, REACT_MEMO_TYPE, REACT_SCOPE_TYPE, REACT_LEGACY_HIDDEN_TYPE } from 'shared/ReactSymbols';
+import isArray from '../../../shared/isArray';
+import getComponentNameFromType from '../../../shared/getComponentNameFromType';
+import ReactSharedInternals from '../../../shared/ReactSharedInternals';
+import { disableLegacyContext, disableModulePatternComponents, enableScopeAPI } from '../../../shared/ReactFeatureFlags';
+import { REACT_DEBUG_TRACING_MODE_TYPE, REACT_FORWARD_REF_TYPE, REACT_FRAGMENT_TYPE, REACT_STRICT_MODE_TYPE, REACT_SUSPENSE_TYPE, REACT_SUSPENSE_LIST_TYPE, REACT_PORTAL_TYPE, REACT_PROFILER_TYPE, REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE, REACT_LAZY_TYPE, REACT_MEMO_TYPE, REACT_SCOPE_TYPE, REACT_LEGACY_HIDDEN_TYPE } from '../../../shared/ReactSymbols';
 import { emptyObject, processContext, validateContextBounds } from './ReactPartialRendererContext';
 import { allocThreadID, freeThreadID } from './ReactThreadIDAllocator';
 import { createMarkupForCustomAttribute, createMarkupForProperty } from './DOMMarkupOperations';
@@ -23,8 +23,8 @@ import dangerousStyleValue from '../shared/dangerousStyleValue';
 import hyphenateStyleName from '../shared/hyphenateStyleName';
 import isCustomComponentFn from '../shared/isCustomComponent';
 import omittedCloseTags from '../shared/omittedCloseTags';
-import assign from 'shared/assign';
-import hasOwnProperty from 'shared/hasOwnProperty'; // Based on reading the React.Children implementation. TODO: type this somewhere?
+import assign from '../../../shared/assign';
+import hasOwnProperty from '../../../shared/hasOwnProperty'; // Based on reading the React.Children implementation. TODO: type this somewhere?
 
 const toArray = React.Children.toArray; // This is only used in DEV.
 // Each entry is `this.stack` from a currently executing renderer instance.

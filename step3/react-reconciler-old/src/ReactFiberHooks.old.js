@@ -6,8 +6,8 @@
  *
  *      
  */
-import ReactSharedInternals from 'shared/ReactSharedInternals';
-import { enableSchedulingProfiler, enableNewReconciler, enableCache, enableUseRefAccessWarning, enableLazyContextPropagation, enableUseMutableSource, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import ReactSharedInternals from '../../shared/ReactSharedInternals';
+import { enableSchedulingProfiler, enableNewReconciler, enableCache, enableUseRefAccessWarning, enableLazyContextPropagation, enableUseMutableSource, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { NoLane, SyncLane, NoLanes, isSubsetOfLanes, includesBlockingLane, includesOnlyNonUrgentLanes, claimNextTransitionLane, mergeLanes, removeLanes, intersectLanes, isTransitionLane, markRootEntangled, markRootMutableRead, NoTimestamp } from './ReactFiberLane.old';
 import { ContinuousEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority, higherEventPriority } from './ReactEventPriorities.old';
 import { readContext, checkIfContextChanged } from './ReactFiberNewContext.old';
@@ -15,7 +15,7 @@ import { HostRoot, CacheComponent } from './ReactWorkTags';
 import { LayoutStatic as LayoutStaticEffect, Passive as PassiveEffect, PassiveStatic as PassiveStaticEffect, Update as UpdateEffect, StoreConsistency } from './ReactFiberFlags';
 import { HasEffect as HookHasEffect, Layout as HookLayout, Passive as HookPassive, Insertion as HookInsertion } from './ReactHookEffectTags';
 import { getWorkInProgressRoot, scheduleUpdateOnFiber, requestUpdateLane, requestEventTime, markSkippedUpdateLanes } from './ReactFiberWorkLoop.old';
-import is from 'shared/objectIs';
+import is from '../../shared/objectIs';
 import { markWorkInProgressReceivedUpdate, checkIfWorkInProgressReceivedUpdate } from './ReactFiberBeginWork.old';
 import { getIsHydrating } from './ReactFiberHydrationContext.old';
 import { getWorkInProgressVersion, markSourceAsDirty, setWorkInProgressVersion } from './ReactMutableSource.old';

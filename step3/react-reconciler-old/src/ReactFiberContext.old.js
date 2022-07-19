@@ -7,9 +7,9 @@
  *      
  */
 import { isFiberMounted } from './ReactFiberTreeReflection';
-import { disableLegacyContext } from 'shared/ReactFeatureFlags';
+import { disableLegacyContext } from '../../shared/ReactFeatureFlags';
 import { ClassComponent, HostRoot } from './ReactWorkTags';
-import getComponentNameFromFiber from 'react-reconciler.new/src/getComponentNameFromFiber';
+import getComponentNameFromFiber from '../../react-reconciler-new/src/getComponentNameFromFiber';
 import { createCursor, push, pop } from './ReactFiberStack.old';
 export const emptyContextObject = {}; // A cursor to the current merged context object on the stack.
 

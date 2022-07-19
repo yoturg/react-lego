@@ -7,8 +7,8 @@
  *      
  */
 import { validateContextBounds } from './ReactPartialRendererContext';
-import { enableCache } from 'shared/ReactFeatureFlags';
-import is from 'shared/objectIs';
+import { enableCache } from '../../../shared/ReactFeatureFlags';
+import is from '../../../shared/objectIs';
 let currentlyRenderingComponent = null;
 let firstWorkInProgressHook = null;
 let workInProgressHook = null; // Whether the work-in-progress hook is a re-rendered hook

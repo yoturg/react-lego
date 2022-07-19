@@ -9,7 +9,7 @@
 import { getPublicInstance, getInstanceFromNode, getInstanceFromScope } from './ReactFiberHostConfig';
 import { isFiberSuspenseAndTimedOut } from './ReactFiberTreeReflection';
 import { HostComponent, ScopeComponent, ContextProvider } from './ReactWorkTags';
-import { enableScopeAPI } from 'shared/ReactFeatureFlags';
+import { enableScopeAPI } from '../../shared/ReactFeatureFlags';
 
 function getSuspenseFallbackChild(fiber) {
   return fiber.child.sibling.child;

@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableCreateEventHandleAPI, enableProfilerTimer, enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableSchedulingProfiler, enableSuspenseCallback, enableScopeAPI, deletedTreeCleanUpLevel, enableUpdaterTracking, enableCache, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableCreateEventHandleAPI, enableProfilerTimer, enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableSchedulingProfiler, enableSuspenseCallback, enableScopeAPI, deletedTreeCleanUpLevel, enableUpdaterTracking, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { FunctionComponent, ForwardRef, ClassComponent, HostRoot, HostComponent, HostText, HostPortal, Profiler, SuspenseComponent, DehydratedFragment, IncompleteClassComponent, MemoComponent, SimpleMemoComponent, SuspenseListComponent, ScopeComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from './ReactWorkTags';
 import { detachDeletedInstance } from './ReactFiberHostConfig';
 import { NoFlags, ContentReset, Placement, ChildDeletion, Snapshot, Update, Ref, Hydrating, Passive, BeforeMutationMask, MutationMask, LayoutMask, PassiveMask, Visibility } from './ReactFiberFlags';

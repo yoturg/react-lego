@@ -6,8 +6,8 @@
  *
  *      
  */
-import { enableFilterEmptyStringAttributesDOM, enableCustomElementPropertySupport } from 'shared/ReactFeatureFlags';
-import hasOwnProperty from 'shared/hasOwnProperty'; // A reserved attribute.
+import { enableFilterEmptyStringAttributesDOM, enableCustomElementPropertySupport } from '../../../shared/ReactFeatureFlags';
+import hasOwnProperty from '../../../shared/hasOwnProperty'; // A reserved attribute.
 // It is handled by React separately and shouldn't be written to the DOM.
 
 export const RESERVED = 0; // A simple string attribute.

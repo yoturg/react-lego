@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableCreateEventHandleAPI } from 'shared/ReactFeatureFlags'; // Don't change these two values. They're used by React Dev Tools.
+import { enableCreateEventHandleAPI } from '../../shared/ReactFeatureFlags'; // Don't change these two values. They're used by React Dev Tools.
 
 export const NoFlags =
 /*                      */

@@ -9,14 +9,14 @@
 import { registerTwoPhaseEvent } from '../EventRegistry';
 import { SyntheticEvent } from '../SyntheticEvent';
 import isTextInputElement from '../isTextInputElement';
-import { canUseDOM } from 'shared/ExecutionEnvironment';
+import { canUseDOM } from '../../../../shared/ExecutionEnvironment';
 import getEventTarget from '../getEventTarget';
 import isEventSupported from '../isEventSupported';
 import { getNodeFromInstance } from '../../client/ReactDOMComponentTree';
 import { updateValueIfChanged } from '../../client/inputValueTracking';
 import { setDefaultValue } from '../../client/ReactDOMInput';
 import { enqueueStateRestore } from '../ReactDOMControlledComponent';
-import { disableInputAttributeSyncing, enableCustomElementPropertySupport } from 'shared/ReactFeatureFlags';
+import { disableInputAttributeSyncing, enableCustomElementPropertySupport } from '../../../../shared/ReactFeatureFlags';
 import { batchedUpdates } from '../ReactDOMUpdateBatching';
 import { processDispatchQueue, accumulateTwoPhaseListeners } from '../DOMPluginEventSystem';
 import isCustomComponent from '../../shared/isCustomComponent';

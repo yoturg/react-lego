@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableSuspenseAvoidThisFallback } from 'shared/ReactFeatureFlags';
+import { enableSuspenseAvoidThisFallback } from '../../shared/ReactFeatureFlags';
 import { SuspenseComponent, SuspenseListComponent } from './ReactWorkTags';
 import { NoFlags, DidCapture } from './ReactFiberFlags';
 import { isSuspenseInstancePending, isSuspenseInstanceFallback } from './ReactFiberHostConfig'; // A null SuspenseState represents an unsuspended normal Suspense boundary.

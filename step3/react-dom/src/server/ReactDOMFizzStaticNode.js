@@ -7,7 +7,7 @@
  *      
  */
 import { Readable } from 'stream';
-import ReactVersion from 'shared/ReactVersion';
+import ReactVersion from '../../../shared/ReactVersion';
 import { createRequest, startWork, startFlowing, abort } from 'react-server/src/ReactFizzServer';
 import { createResponseState, createRootFormatContext } from './ReactDOMServerFormatConfig';
 

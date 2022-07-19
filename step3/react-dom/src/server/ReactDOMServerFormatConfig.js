@@ -7,15 +7,15 @@
  *      
  */
 import { Children } from 'react';
-import { enableFilterEmptyStringAttributesDOM, enableCustomElementPropertySupport } from 'shared/ReactFeatureFlags';
+import { enableFilterEmptyStringAttributesDOM, enableCustomElementPropertySupport } from '../../../shared/ReactFeatureFlags';
 import { writeChunk, writeChunkAndReturn, stringToChunk, stringToPrecomputedChunk } from 'react-server/src/ReactServerStreamConfig';
 import { getPropertyInfo, isAttributeNameSafe, BOOLEAN, OVERLOADED_BOOLEAN, NUMERIC, POSITIVE_NUMERIC } from '../shared/DOMProperty';
 import { isUnitlessNumber } from '../shared/CSSProperty';
 import escapeTextForBrowser from './escapeTextForBrowser';
 import hyphenateStyleName from '../shared/hyphenateStyleName';
-import hasOwnProperty from 'shared/hasOwnProperty';
+import hasOwnProperty from '../../../shared/hasOwnProperty';
 import sanitizeURL from '../shared/sanitizeURL';
-import isArray from 'shared/isArray'; // Used to distinguish these contexts from ones used in other renderers.
+import isArray from '../../../shared/isArray'; // Used to distinguish these contexts from ones used in other renderers.
 // E.g. this can be used to distinguish legacy renderers from this modern one.
 
 export const isPrimaryRenderer = true; // Per response, global state that is not contextual to the rendering subtree.

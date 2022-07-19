@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import ReactNoopUpdateQueue from './ReactNoopUpdateQueue';
-import assign from 'shared/assign';
+import assign from '../../shared/assign';
 const emptyObject = {};
 /**
  * Base class helpers for the updating state of a component.

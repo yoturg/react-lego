@@ -7,7 +7,7 @@
  *      
  */
 import { HostComponent, LazyComponent, SuspenseComponent, SuspenseListComponent, FunctionComponent, IndeterminateComponent, ForwardRef, SimpleMemoComponent, ClassComponent } from './ReactWorkTags';
-import { describeBuiltInComponentFrame, describeFunctionComponentFrame, describeClassComponentFrame } from 'shared/ReactComponentStackFrame';
+import { describeBuiltInComponentFrame, describeFunctionComponentFrame, describeClassComponentFrame } from '../../shared/ReactComponentStackFrame';
 
 function describeFiber(fiber) {
   const owner = null;

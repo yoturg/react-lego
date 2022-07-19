@@ -8,7 +8,7 @@
  */
 // TODO: Ideally these types would be opaque but that doesn't work well with
 // our reconciler fork infra, since these leak into non-reconciler packages.
-import { enableSchedulingProfiler, enableUpdaterTracking, allowConcurrentByDefault, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableSchedulingProfiler, enableUpdaterTracking, allowConcurrentByDefault, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { isDevToolsPresent } from './ReactFiberDevToolsHook.new';
 import { ConcurrentUpdatesByDefaultMode, NoMode } from './ReactTypeOfMode';
 import { clz32 } from './clz32'; // Lane values below should be kept in sync with getLabelForLane(), used by react-devtools-timeline.

@@ -10,7 +10,7 @@ import { resetWorkInProgressVersions as resetMutableSourceWorkInProgressVersions
 import { ClassComponent, HostRoot, HostComponent, HostPortal, ContextProvider, SuspenseComponent, SuspenseListComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from './ReactWorkTags';
 import { DidCapture, NoFlags, ShouldCapture } from './ReactFiberFlags';
 import { NoMode, ProfileMode } from './ReactTypeOfMode';
-import { enableProfilerTimer, enableCache, enableTransitionTracing } from 'shared/ReactFeatureFlags';
+import { enableProfilerTimer, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { popHostContainer, popHostContext } from './ReactFiberHostContext.new';
 import { popSuspenseContext } from './ReactFiberSuspenseContext.new';
 import { resetHydrationState } from './ReactFiberHydrationContext.new';

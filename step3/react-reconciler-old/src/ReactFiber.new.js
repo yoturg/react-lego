@@ -6,14 +6,14 @@
  *
  *      
  */
-import { createRootStrictEffectsByDefault, enableCache, enableStrictEffects, enableProfilerTimer, enableScopeAPI, enableLegacyHidden, enableSyncDefaultUpdates, allowConcurrentByDefault, enableTransitionTracing, enableDebugTracing } from 'shared/ReactFeatureFlags';
+import { createRootStrictEffectsByDefault, enableCache, enableStrictEffects, enableProfilerTimer, enableScopeAPI, enableLegacyHidden, enableSyncDefaultUpdates, allowConcurrentByDefault, enableTransitionTracing, enableDebugTracing } from '../../shared/ReactFeatureFlags';
 import { NoFlags, Placement, StaticMask } from './ReactFiberFlags';
 import { ConcurrentRoot } from './ReactRootTags';
 import { IndeterminateComponent, ClassComponent, HostRoot, HostComponent, HostText, HostPortal, ForwardRef, Fragment, Mode, ContextProvider, ContextConsumer, Profiler, SuspenseComponent, SuspenseListComponent, DehydratedFragment, FunctionComponent, MemoComponent, LazyComponent, ScopeComponent, OffscreenComponent, LegacyHiddenComponent, CacheComponent, TracingMarkerComponent } from './ReactWorkTags';
 import { isDevToolsPresent } from './ReactFiberDevToolsHook.new';
 import { NoLanes } from './ReactFiberLane.new';
 import { NoMode, ConcurrentMode, DebugTracingMode, ProfileMode, StrictLegacyMode, StrictEffectsMode, ConcurrentUpdatesByDefaultMode } from './ReactTypeOfMode';
-import { REACT_FORWARD_REF_TYPE, REACT_FRAGMENT_TYPE, REACT_DEBUG_TRACING_MODE_TYPE, REACT_STRICT_MODE_TYPE, REACT_PROFILER_TYPE, REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE, REACT_SUSPENSE_TYPE, REACT_SUSPENSE_LIST_TYPE, REACT_MEMO_TYPE, REACT_LAZY_TYPE, REACT_SCOPE_TYPE, REACT_OFFSCREEN_TYPE, REACT_LEGACY_HIDDEN_TYPE, REACT_CACHE_TYPE, REACT_TRACING_MARKER_TYPE } from 'shared/ReactSymbols';
+import { REACT_FORWARD_REF_TYPE, REACT_FRAGMENT_TYPE, REACT_DEBUG_TRACING_MODE_TYPE, REACT_STRICT_MODE_TYPE, REACT_PROFILER_TYPE, REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE, REACT_SUSPENSE_TYPE, REACT_SUSPENSE_LIST_TYPE, REACT_MEMO_TYPE, REACT_LAZY_TYPE, REACT_SCOPE_TYPE, REACT_OFFSCREEN_TYPE, REACT_LEGACY_HIDDEN_TYPE, REACT_CACHE_TYPE, REACT_TRACING_MARKER_TYPE } from '../../shared/ReactSymbols';
 
 function FiberNode(tag, pendingProps, key, mode) {
   // Instance

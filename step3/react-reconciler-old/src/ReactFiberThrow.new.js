@@ -10,7 +10,7 @@ import { ClassComponent, HostRoot, SuspenseComponent, IncompleteClassComponent, 
 import { DidCapture, Incomplete, NoFlags, ShouldCapture, LifecycleEffectMask, ForceUpdateForLegacySuspense, ForceClientRender } from './ReactFiberFlags';
 import { shouldCaptureSuspense } from './ReactFiberSuspenseComponent.new';
 import { NoMode, ConcurrentMode } from './ReactTypeOfMode';
-import { enableLazyContextPropagation, enableUpdaterTracking } from 'shared/ReactFeatureFlags';
+import { enableLazyContextPropagation, enableUpdaterTracking } from '../../shared/ReactFeatureFlags';
 import { createCapturedValueAtFiber } from './ReactCapturedValue';
 import { enqueueCapturedUpdate, createUpdate, CaptureUpdate, ForceUpdate, enqueueUpdate } from './ReactFiberClassUpdateQueue.new';
 import { suspenseStackCursor, InvisibleParentSuspenseContext, hasSuspenseContext } from './ReactFiberSuspenseContext.new';

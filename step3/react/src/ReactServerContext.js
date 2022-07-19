@@ -6,9 +6,9 @@
  *
  *      
  */
-import { REACT_PROVIDER_TYPE, REACT_SERVER_CONTEXT_TYPE, REACT_SERVER_CONTEXT_DEFAULT_VALUE_NOT_LOADED } from 'shared/ReactSymbols';
-import { enableServerContext } from 'shared/ReactFeatureFlags';
-import ReactSharedInternals from 'shared/ReactSharedInternals';
+import { REACT_PROVIDER_TYPE, REACT_SERVER_CONTEXT_TYPE, REACT_SERVER_CONTEXT_DEFAULT_VALUE_NOT_LOADED } from '../../shared/ReactSymbols';
+import { enableServerContext } from '../../shared/ReactFeatureFlags';
+import ReactSharedInternals from '../../shared/ReactSharedInternals';
 const ContextRegistry = ReactSharedInternals.ContextRegistry;
 export function createServerContext(globalName, defaultValue) {
   if (!enableServerContext) {

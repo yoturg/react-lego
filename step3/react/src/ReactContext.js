@@ -6,7 +6,7 @@
  *
  *      
  */
-import { REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE } from 'shared/ReactSymbols';
+import { REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE } from '../../shared/ReactSymbols';
 export function createContext(defaultValue) {
   // TODO: Second argument used to be an optional `calculateChangedBits`
   // function. Warn to reserve for future use?

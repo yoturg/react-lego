@@ -10,15 +10,15 @@ import { SHOULD_NOT_DEFER_CLICK_FOR_FB_SUPPORT_MODE, IS_LEGACY_FB_SUPPORT_MODE, 
 import { allNativeEvents } from './EventRegistry';
 import { IS_CAPTURE_PHASE, IS_EVENT_HANDLE_NON_MANAGED_NODE, IS_NON_DELEGATED } from './EventSystemFlags';
 import { isReplayingEvent } from './CurrentReplayingEvent';
-import { HostRoot, HostPortal, HostComponent, HostText, ScopeComponent } from 'react-reconciler.new/src/ReactWorkTags';
+import { HostRoot, HostPortal, HostComponent, HostText, ScopeComponent } from '../../../react-reconciler-new/src/ReactWorkTags';
 import getEventTarget from './getEventTarget';
 import { getClosestInstanceFromNode, getEventListenerSet, getEventHandlerListeners } from '../client/ReactDOMComponentTree';
 import { COMMENT_NODE } from '../shared/HTMLNodeType';
 import { batchedUpdates } from './ReactDOMUpdateBatching';
 import getListener from './getListener';
 import { passiveBrowserEventsSupported } from './checkPassiveEvents';
-import { enableLegacyFBSupport, enableCreateEventHandleAPI, enableScopeAPI } from 'shared/ReactFeatureFlags';
-import { invokeGuardedCallbackAndCatchFirstError, rethrowCaughtError } from 'shared/ReactErrorUtils';
+import { enableLegacyFBSupport, enableCreateEventHandleAPI, enableScopeAPI } from '../../../shared/ReactFeatureFlags';
+import { invokeGuardedCallbackAndCatchFirstError, rethrowCaughtError } from '../../../shared/ReactErrorUtils';
 import { DOCUMENT_NODE } from '../shared/HTMLNodeType';
 import { createEventListenerWrapperWithPriority } from './ReactDOMEventListener';
 import { removeEventListener, addEventCaptureListener, addEventBubbleListener, addEventBubbleListenerWithPassiveFlag, addEventCaptureListenerWithPassiveFlag } from './EventListener';

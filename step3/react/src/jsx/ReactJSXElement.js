@@ -4,9 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import ReactSharedInternals from 'shared/ReactSharedInternals';
-import hasOwnProperty from 'shared/hasOwnProperty';
-import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
+import ReactSharedInternals from '../../../shared/ReactSharedInternals';
+import hasOwnProperty from '../../../shared/hasOwnProperty';
+import { REACT_ELEMENT_TYPE } from '../../../shared/ReactSymbols';
 const ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
 const RESERVED_PROPS = {
   key: true,

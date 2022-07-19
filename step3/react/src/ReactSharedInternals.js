@@ -7,7 +7,7 @@
 import ReactCurrentDispatcher from './ReactCurrentDispatcher';
 import ReactCurrentBatchConfig from './ReactCurrentBatchConfig';
 import ReactCurrentOwner from './ReactCurrentOwner';
-import { enableServerContext } from 'shared/ReactFeatureFlags';
+import { enableServerContext } from '../../shared/ReactFeatureFlags';
 import { ContextRegistry } from './ReactServerContextRegistry';
 const ReactSharedInternals = {
   ReactCurrentDispatcher,

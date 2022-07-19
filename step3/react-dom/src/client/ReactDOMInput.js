@@ -12,8 +12,8 @@ import { getFiberCurrentPropsFromNode } from './ReactDOMComponentTree';
 import { getToStringValue, toString } from './ToStringValue';
 import { updateValueIfChanged } from './inputValueTracking';
 import getActiveElement from './getActiveElement';
-import assign from 'shared/assign';
-import { disableInputAttributeSyncing } from 'shared/ReactFeatureFlags';
+import assign from '../../../shared/assign';
+import { disableInputAttributeSyncing } from '../../../shared/ReactFeatureFlags';
 
 function isControlled(props) {
   const usesChecked = props.type === 'checkbox' || props.type === 'radio';

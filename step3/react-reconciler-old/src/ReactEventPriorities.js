@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableNewReconciler } from 'shared/ReactFeatureFlags';
+import { enableNewReconciler } from '../../shared/ReactFeatureFlags';
 import { DiscreteEventPriority as DiscreteEventPriority_old, ContinuousEventPriority as ContinuousEventPriority_old, DefaultEventPriority as DefaultEventPriority_old, IdleEventPriority as IdleEventPriority_old, getCurrentUpdatePriority as getCurrentUpdatePriority_old, setCurrentUpdatePriority as setCurrentUpdatePriority_old, runWithPriority as runWithPriority_old, isHigherEventPriority as isHigherEventPriority_old } from './ReactEventPriorities.old';
 import { DiscreteEventPriority as DiscreteEventPriority_new, ContinuousEventPriority as ContinuousEventPriority_new, DefaultEventPriority as DefaultEventPriority_new, IdleEventPriority as IdleEventPriority_new, getCurrentUpdatePriority as getCurrentUpdatePriority_new, setCurrentUpdatePriority as setCurrentUpdatePriority_new, runWithPriority as runWithPriority_new, isHigherEventPriority as isHigherEventPriority_new } from './ReactEventPriorities.new';
 export const DiscreteEventPriority = enableNewReconciler ? DiscreteEventPriority_new : DiscreteEventPriority_old;

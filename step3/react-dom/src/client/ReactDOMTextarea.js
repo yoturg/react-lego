@@ -6,9 +6,9 @@
  *
  *      
  */
-import isArray from 'shared/isArray';
+import isArray from '../../../shared/isArray';
 import { getToStringValue, toString } from './ToStringValue';
-import { disableTextareaChildren } from 'shared/ReactFeatureFlags';
+import { disableTextareaChildren } from '../../../shared/ReactFeatureFlags';
 /**
  * Implements a <textarea> host component that allows setting `value`, and
  * `defaultValue`. This differs from the traditional DOM API because value is

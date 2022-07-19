@@ -6,7 +6,7 @@
  *
  *      
  */
-import { get as getInstance } from 'shared/ReactInstanceMap';
+import { get as getInstance } from '../../shared/ReactInstanceMap';
 import { HostComponent, HostRoot, HostPortal, HostText, SuspenseComponent } from './ReactWorkTags';
 import { NoFlags, Placement, Hydrating } from './ReactFiberFlags';
 export function getNearestMountedFiber(fiber) {

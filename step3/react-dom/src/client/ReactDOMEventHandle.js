@@ -10,7 +10,7 @@ import { allNativeEvents } from '../events/EventRegistry';
 import { getEventHandlerListeners, setEventHandlerListeners, doesTargetHaveEventHandle, addEventHandleToTarget } from './ReactDOMComponentTree';
 import { ELEMENT_NODE } from '../shared/HTMLNodeType';
 import { listenToNativeEventForNonManagedEventTarget } from '../events/DOMPluginEventSystem';
-import { enableScopeAPI, enableCreateEventHandleAPI } from 'shared/ReactFeatureFlags';
+import { enableScopeAPI, enableCreateEventHandleAPI } from '../../../shared/ReactFeatureFlags';
 
 function isValidEventTarget(target) {
   return typeof target.addEventListener === 'function';

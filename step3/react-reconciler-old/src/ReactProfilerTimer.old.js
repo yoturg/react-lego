@@ -6,11 +6,11 @@
  *
  *      
  */
-import { enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableProfilerTimer } from 'shared/ReactFeatureFlags';
+import { enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableProfilerTimer } from '../../shared/ReactFeatureFlags';
 import { HostRoot, Profiler } from './ReactWorkTags'; // Intentionally not named imports because Rollup would use dynamic dispatch for
 // CommonJS interop named imports.
 
-import * as Scheduler from 'scheduler';
+import * as Scheduler from '../../scheduler';
 const {
   unstable_now: now
 } = Scheduler;

@@ -8,7 +8,7 @@
  */
 import { registerTwoPhaseEvent } from './EventRegistry';
 import { ANIMATION_END, ANIMATION_ITERATION, ANIMATION_START, TRANSITION_END } from './DOMEventNames';
-import { enableCreateEventHandleAPI } from 'shared/ReactFeatureFlags';
+import { enableCreateEventHandleAPI } from '../../../shared/ReactFeatureFlags';
 export const topLevelEventsToReactNames = new Map(); // NOTE: Capitalization is important in this list!
 //
 // E.g. it needs "pointerDown", not "pointerdown".

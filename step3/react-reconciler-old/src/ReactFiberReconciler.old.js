@@ -7,10 +7,10 @@
  *      
  */
 import { findCurrentHostFiber, findCurrentHostFiberWithNoPortals } from './ReactFiberTreeReflection';
-import { get as getInstance } from 'shared/ReactInstanceMap';
+import { get as getInstance } from '../../shared/ReactInstanceMap';
 import { HostComponent, ClassComponent, HostRoot, SuspenseComponent } from './ReactWorkTags';
-import { enableSchedulingProfiler } from 'shared/ReactFeatureFlags';
-import ReactSharedInternals from 'shared/ReactSharedInternals';
+import { enableSchedulingProfiler } from '../../shared/ReactFeatureFlags';
+import ReactSharedInternals from '../../shared/ReactSharedInternals';
 import { getPublicInstance } from './ReactFiberHostConfig';
 import { findCurrentUnmaskedContext, processChildContext, emptyContextObject, isContextProvider as isLegacyContextProvider } from './ReactFiberContext.old';
 import { createFiberRoot } from './ReactFiberRoot.old';
@@ -21,7 +21,7 @@ import { enqueueConcurrentRenderForLane } from './ReactFiberConcurrentUpdates.ol
 import { createUpdate, enqueueUpdate, entangleTransitions } from './ReactFiberClassUpdateQueue.old';
 import { SyncLane, SelectiveHydrationLane, getHighestPriorityPendingLanes, higherPriorityLane } from './ReactFiberLane.old';
 import { getCurrentUpdatePriority, runWithPriority } from './ReactEventPriorities.old';
-import ReactVersion from 'shared/ReactVersion';
+import ReactVersion from '../../shared/ReactVersion';
 export { registerMutableSourceForHydration } from './ReactMutableSource.old';
 export { createPortal } from './ReactPortal';
 export { createComponentSelector, createHasPseudoClassSelector, createRoleSelector, createTestNameSelector, createTextSelector, getFindAllNodesFailureDescription, findAllNodes, findBoundingRects, focusWithin, observeVisibleRects } from './ReactTestSelectors'; // 0 is PROD, 1 is DEV.

@@ -86,7 +86,7 @@ import { NoLane, NoLanes, isSubsetOfLanes, mergeLanes, isTransitionLane, interse
 import { Callback, ShouldCapture, DidCapture } from './ReactFiberFlags';
 import { markSkippedUpdateLanes, isUnsafeClassRenderPhaseUpdate } from './ReactFiberWorkLoop.old';
 import { enqueueConcurrentClassUpdate, unsafe_markUpdateLaneFromFiberToRoot } from './ReactFiberConcurrentUpdates.old';
-import assign from 'shared/assign';
+import assign from '../../shared/assign';
 export const UpdateState = 0;
 export const ReplaceState = 1;
 export const ForceUpdate = 2;

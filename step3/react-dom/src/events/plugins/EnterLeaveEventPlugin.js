@@ -11,8 +11,8 @@ import { isReplayingEvent } from '../CurrentReplayingEvent';
 import { SyntheticMouseEvent, SyntheticPointerEvent } from '../SyntheticEvent';
 import { getClosestInstanceFromNode, getNodeFromInstance, isContainerMarkedAsRoot } from '../../client/ReactDOMComponentTree';
 import { accumulateEnterLeaveTwoPhaseListeners } from '../DOMPluginEventSystem';
-import { HostComponent, HostText } from 'react-reconciler.new/src/ReactWorkTags';
-import { getNearestMountedFiber } from 'react-reconciler.new/src/ReactFiberTreeReflection';
+import { HostComponent, HostText } from '../../../../react-reconciler-new/src/ReactWorkTags';
+import { getNearestMountedFiber } from '../../../../react-reconciler-new/src/ReactFiberTreeReflection';
 
 function registerEvents() {
   registerDirectEvent('onMouseEnter', ['mouseout', 'mouseover']);

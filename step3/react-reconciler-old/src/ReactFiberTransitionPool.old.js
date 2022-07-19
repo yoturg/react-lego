@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableCache } from 'shared/ReactFeatureFlags';
+import { enableCache } from '../../shared/ReactFeatureFlags';
 import { isPrimaryRenderer } from './ReactFiberHostConfig';
 import { createCursor, push, pop } from './ReactFiberStack.old';
 import { getWorkInProgressRoot } from './ReactFiberWorkLoop.old';
