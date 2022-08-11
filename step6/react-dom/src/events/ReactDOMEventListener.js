@@ -7,7 +7,11 @@
  *      
  */
 import { getCurrentPriorityLevel as getCurrentSchedulerPriorityLevel, IdlePriority as IdleSchedulerPriority, ImmediatePriority as ImmediateSchedulerPriority, LowPriority as LowSchedulerPriority, NormalPriority as NormalSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority } from '../../../react-reconciler-new/src/Scheduler';
-import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority } from '../../../react-reconciler-new/src/ReactEventPriorities'; // TODO: can we stop exporting these?
+import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority } from '../../../react-reconciler-new/src/ReactEventPriorities';
+import ReactSharedInternals from '../../../shared/ReactSharedInternals';
+const {
+  ReactCurrentBatchConfig
+} = ReactSharedInternals; // TODO: can we stop exporting these?
 
 export let _enabled = true; // This is exported in FB builds for use by legacy FB layer infra.
 // We'd like to remove this but it's not clear if this is safe.
@@ -33,6 +37,35 @@ export function createEventListenerWrapperWithPriority(targetContainer, domEvent
 
   return listenerWrapper.bind(null, domEventName, eventSystemFlags, targetContainer);
 }
+
+function dispatchDiscreteEvent(domEventName, eventSystemFlags, container, nativeEvent) {
+  const previousPriority = getCurrentUpdatePriority();
+  const prevTransition = ReactCurrentBatchConfig.transition;
+  ReactCurrentBatchConfig.transition = null;
+
+  try {
+    setCurrentUpdatePriority(DiscreteEventPriority);
+    dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
+  } finally {
+    setCurrentUpdatePriority(previousPriority);
+    ReactCurrentBatchConfig.transition = prevTransition;
+  }
+}
+
+function dispatchContinuousEvent(domEventName, eventSystemFlags, container, nativeEvent) {
+  const previousPriority = getCurrentUpdatePriority();
+  const prevTransition = ReactCurrentBatchConfig.transition;
+  ReactCurrentBatchConfig.transition = null;
+
+  try {
+    setCurrentUpdatePriority(ContinuousEventPriority);
+    dispatchEvent(domEventName, eventSystemFlags, container, nativeEvent);
+  } finally {
+    setCurrentUpdatePriority(previousPriority);
+    ReactCurrentBatchConfig.transition = prevTransition;
+  }
+}
+
 export let return_targetInst = null; // Returns a SuspenseInstance or Container if it's blocked.
 // The return_targetInst field above is conceptually part of the return value.
 

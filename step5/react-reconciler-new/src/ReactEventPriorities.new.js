@@ -18,6 +18,9 @@ export function getCurrentUpdatePriority() {
 export function setCurrentUpdatePriority(newPriority) {
   currentUpdatePriority = newPriority;
 }
+export function lowerEventPriority(a, b) {
+  return a === 0 || a > b ? a : b;
+}
 export function isHigherEventPriority(a, b) {
   return a !== 0 && a < b;
 }

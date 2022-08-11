@@ -305,6 +305,24 @@ export function getNextLanes(root, wipLanes) {
 
   return nextLanes;
 }
+export function getMostRecentEventTime(root, lanes) {
+  const eventTimes = root.eventTimes;
+  let mostRecentEventTime = NoTimestamp;
+
+  while (lanes > 0) {
+    const index = pickArbitraryLaneIndex(lanes);
+    const lane = 1 << index;
+    const eventTime = eventTimes[index];
+
+    if (eventTime > mostRecentEventTime) {
+      mostRecentEventTime = eventTime;
+    }
+
+    lanes &= ~lane;
+  }
+
+  return mostRecentEventTime;
+}
 
 function computeExpirationTime(lane, currentTime) {
   switch (lane) {
@@ -403,8 +421,41 @@ export function markStarvedLanesAsExpired(root, currentTime) {
 } // This returns the highest priority pending lanes regardless of whether they
 // are suspended.
 
+export function getLanesToRetrySynchronouslyOnError(root) {
+  const everythingButOffscreen = root.pendingLanes & ~OffscreenLane;
+
+  if (everythingButOffscreen !== NoLanes) {
+    return everythingButOffscreen;
+  }
+
+  if (everythingButOffscreen & OffscreenLane) {
+    return OffscreenLane;
+  }
+
+  return NoLanes;
+}
 export function includesNonIdleWork(lanes) {
   return (lanes & NonIdleLanes) !== NoLanes;
+}
+export function includesOnlyRetries(lanes) {
+  return (lanes & RetryLanes) === lanes;
+}
+export function includesOnlyTransitions(lanes) {
+  return (lanes & TransitionLanes) === lanes;
+}
+export function includesBlockingLane(root, lanes) {
+  if (allowConcurrentByDefault && (root.current.mode & ConcurrentUpdatesByDefaultMode) !== NoMode) {
+    // Concurrent updates by default always use time slicing.
+    return false;
+  }
+
+  const SyncDefaultLanes = InputContinuousHydrationLane | InputContinuousLane | DefaultHydrationLane | DefaultLane;
+  return (lanes & SyncDefaultLanes) !== NoLanes;
+}
+export function includesExpiredLane(root, lanes) {
+  // This is a separate check from includesBlockingLane because a lane can
+  // expire after a render has already started.
+  return (lanes & root.expiredLanes) !== NoLanes;
 }
 export function isTransitionLane(lane) {
   return (lane & TransitionLanes) !== NoLanes;
@@ -441,6 +492,12 @@ function laneToIndex(lane) {
   return pickArbitraryLaneIndex(lane);
 }
 
+export function includesSomeLane(a, b) {
+  return (a & b) !== NoLanes;
+}
+export function isSubsetOfLanes(set, subset) {
+  return (set & subset) === subset;
+}
 export function mergeLanes(a, b) {
   return a | b;
 }
@@ -476,6 +533,51 @@ export function markRootUpdated(root, updateLane, eventTime) {
   // recent event, and we assume time is monotonically increasing.
 
   eventTimes[index] = eventTime;
+}
+export function markRootPinged(root, pingedLanes, eventTime) {
+  root.pingedLanes |= root.suspendedLanes & pingedLanes;
+}
+export function markRootFinished(root, remainingLanes) {
+  const noLongerPendingLanes = root.pendingLanes & ~remainingLanes;
+  root.pendingLanes = remainingLanes; // Let's try everything again
+
+  root.suspendedLanes = NoLanes;
+  root.pingedLanes = NoLanes;
+  root.expiredLanes &= remainingLanes;
+  root.mutableReadLanes &= remainingLanes;
+  root.entangledLanes &= remainingLanes;
+  const entanglements = root.entanglements;
+  const eventTimes = root.eventTimes;
+  const expirationTimes = root.expirationTimes;
+  const hiddenUpdates = root.hiddenUpdates; // Clear the lanes that no longer have pending work
+
+  let lanes = noLongerPendingLanes;
+
+  while (lanes > 0) {
+    const index = pickArbitraryLaneIndex(lanes);
+    const lane = 1 << index;
+    entanglements[index] = NoLanes;
+    eventTimes[index] = NoTimestamp;
+    expirationTimes[index] = NoTimestamp;
+    const hiddenUpdatesForLane = hiddenUpdates[index];
+
+    if (hiddenUpdatesForLane !== null) {
+      hiddenUpdates[index] = null; // "Hidden" updates are updates that were made to a hidden component. They
+      // have special logic associated with them because they may be entangled
+      // with updates that occur outside that tree. But once the outer tree
+      // commits, they behave like regular updates.
+
+      for (let i = 0; i < hiddenUpdatesForLane.length; i++) {
+        const update = hiddenUpdatesForLane[i];
+
+        if (update !== null) {
+          update.lane &= ~OffscreenLane;
+        }
+      }
+    }
+
+    lanes &= ~lane;
+  }
 }
 export function markRootEntangled(root, entangledLanes) {
   // In addition to entangling each of the given lanes with each other, we also
@@ -538,6 +640,37 @@ export function addFiberToLanesMap(root, fiber, lanes) {
     lanes &= ~lane;
   }
 }
+export function movePendingFibersToMemoized(root, lanes) {
+  if (!enableUpdaterTracking) {
+    return;
+  }
+
+  if (!isDevToolsPresent) {
+    return;
+  }
+
+  const pendingUpdatersLaneMap = root.pendingUpdatersLaneMap;
+  const memoizedUpdaters = root.memoizedUpdaters;
+
+  while (lanes > 0) {
+    const index = laneToIndex(lanes);
+    const lane = 1 << index;
+    const updaters = pendingUpdatersLaneMap[index];
+
+    if (updaters.size > 0) {
+      updaters.forEach(fiber => {
+        const alternate = fiber.alternate;
+
+        if (alternate === null || !memoizedUpdaters.has(alternate)) {
+          memoizedUpdaters.add(fiber);
+        }
+      });
+      updaters.clear();
+    }
+
+    lanes &= ~lane;
+  }
+}
 export function addTransitionToLanesMap(root, transition, lane) {
   if (enableTransitionTracing) {
     const transitionLanesMap = root.transitionLanes;
@@ -551,4 +684,31 @@ export function addTransitionToLanesMap(root, transition, lane) {
     transitions.push(transition);
     transitionLanesMap[index] = transitions;
   }
+}
+export function getTransitionsForLanes(root, lanes) {
+  if (!enableTransitionTracing) {
+    return null;
+  }
+
+  const transitionsForLanes = [];
+
+  while (lanes > 0) {
+    const index = laneToIndex(lanes);
+    const lane = 1 << index;
+    const transitions = root.transitionLanes[index];
+
+    if (transitions !== null) {
+      transitions.forEach(transition => {
+        transitionsForLanes.push(transition);
+      });
+    }
+
+    lanes &= ~lane;
+  }
+
+  if (transitionsForLanes.length === 0) {
+    return null;
+  }
+
+  return transitionsForLanes;
 }

@@ -6,10 +6,78 @@
  *
  *      
  */
+import { noTimeout, supportsHydration } from './ReactFiberHostConfig';
 import { createHostRootFiber } from './ReactFiber.new';
-import { enableSuspenseCallback, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
+import { NoLane, NoLanes, NoTimestamp, TotalLanes, createLaneMap } from './ReactFiberLane.new';
+import { enableSuspenseCallback, enableCache, enableProfilerCommitHooks, enableProfilerTimer, enableUpdaterTracking, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import { initializeUpdateQueue } from './ReactFiberClassUpdateQueue.new';
 import { createCache, retainCache } from './ReactFiberCacheComponent.new';
+
+function FiberRootNode(containerInfo, tag, hydrate, identifierPrefix, onRecoverableError) {
+  this.tag = tag;
+  this.containerInfo = containerInfo;
+  this.pendingChildren = null;
+  this.current = null;
+  this.pingCache = null;
+  this.finishedWork = null;
+  this.timeoutHandle = noTimeout;
+  this.context = null;
+  this.pendingContext = null;
+  this.callbackNode = null;
+  this.callbackPriority = NoLane;
+  this.eventTimes = createLaneMap(NoLanes);
+  this.expirationTimes = createLaneMap(NoTimestamp);
+  this.pendingLanes = NoLanes;
+  this.suspendedLanes = NoLanes;
+  this.pingedLanes = NoLanes;
+  this.expiredLanes = NoLanes;
+  this.mutableReadLanes = NoLanes;
+  this.finishedLanes = NoLanes;
+  this.entangledLanes = NoLanes;
+  this.entanglements = createLaneMap(NoLanes);
+  this.hiddenUpdates = createLaneMap(null);
+  this.identifierPrefix = identifierPrefix;
+  this.onRecoverableError = onRecoverableError;
+
+  if (enableCache) {
+    this.pooledCache = null;
+    this.pooledCacheLanes = NoLanes;
+  }
+
+  if (supportsHydration) {
+    this.mutableSourceEagerHydrationData = null;
+  }
+
+  if (enableSuspenseCallback) {
+    this.hydrationCallbacks = null;
+  }
+
+  if (enableTransitionTracing) {
+    this.transitionCallbacks = null;
+    const transitionLanesMap = this.transitionLanes = [];
+
+    for (let i = 0; i < TotalLanes; i++) {
+      transitionLanesMap.push(null);
+    }
+
+    this.incompleteTransitions = null;
+  }
+
+  if (enableProfilerTimer && enableProfilerCommitHooks) {
+    this.effectDuration = 0;
+    this.passiveEffectDuration = 0;
+  }
+
+  if (enableUpdaterTracking) {
+    this.memoizedUpdaters = new Set();
+    const pendingUpdatersLaneMap = this.pendingUpdatersLaneMap = [];
+
+    for (let i = 0; i < TotalLanes; i++) {
+      pendingUpdatersLaneMap.push(new Set());
+    }
+  }
+}
+
 export function createFiberRoot(containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, isStrictMode, concurrentUpdatesByDefaultOverride, // TODO: We have several of these arguments that are conceptually part of the
 // host config, but because they are passed in at runtime, we have to thread
 // them through the root constructor. Perhaps we should put them all into a

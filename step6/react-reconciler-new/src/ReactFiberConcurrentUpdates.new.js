@@ -7,7 +7,7 @@
  *      
  */
 import { throwIfInfiniteUpdateLoopDetected } from './ReactFiberWorkLoop.new';
-import { NoLanes, mergeLanes, markHiddenUpdate } from './ReactFiberLane.new';
+import { NoLane, NoLanes, mergeLanes, markHiddenUpdate } from './ReactFiberLane.new';
 import { HostRoot, OffscreenComponent } from './ReactWorkTags'; // If a render is in progress, and we receive an update from a concurrent event,
 // we wait until the current render is over (either finished or interrupted)
 // before adding it to the fiber/hook queue. Push to this array so we can
@@ -16,6 +16,44 @@ import { HostRoot, OffscreenComponent } from './ReactWorkTags'; // If a render i
 const concurrentQueues = [];
 let concurrentQueuesIndex = 0;
 let concurrentlyUpdatedLanes = NoLanes;
+export function finishQueueingConcurrentUpdates() {
+  const endIndex = concurrentQueuesIndex;
+  concurrentQueuesIndex = 0;
+  concurrentlyUpdatedLanes = NoLanes;
+  let i = 0;
+
+  while (i < endIndex) {
+    const fiber = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const queue = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const update = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const lane = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+
+    if (queue !== null && update !== null) {
+      const pending = queue.pending;
+
+      if (pending === null) {
+        // This is the first update. Create a circular list.
+        update.next = update;
+      } else {
+        update.next = pending.next;
+        pending.next = update;
+      }
+
+      queue.pending = update;
+    }
+
+    if (lane !== NoLane) {
+      markUpdateLaneFromFiberToRoot(fiber, update, lane);
+    }
+  }
+}
+export function getConcurrentlyUpdatedLanes() {
+  return concurrentlyUpdatedLanes;
+}
 
 function enqueueUpdate(fiber, queue, update, lane) {
   // Don't update the `childLanes` on the return path yet. If we already in

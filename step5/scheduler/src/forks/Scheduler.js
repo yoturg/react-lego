@@ -368,6 +368,13 @@ function shouldYieldToHost() {
   return true;
 }
 
+function requestPaint() {
+  if (enableIsInputPending && navigator !== undefined && navigator.scheduling !== undefined && navigator.scheduling.isInputPending !== undefined) {
+    needsPaint = true;
+  } // Since we yield every frame regardless, `requestPaint` has no effect.
+
+}
+
 const performWorkUntilDeadline = () => {
   if (scheduledHostCallback !== null) {
     const currentTime = getCurrentTime(); // Keep track of the start time so we can measure how long the main thread
@@ -458,7 +465,8 @@ function cancelHostTimeout() {
   taskTimeoutID = -1;
 }
 
-export { unstable_scheduleCallback, getCurrentTime as unstable_now };
+const unstable_requestPaint = requestPaint;
+export { unstable_scheduleCallback, shouldYieldToHost as unstable_shouldYield, unstable_requestPaint, getCurrentTime as unstable_now };
 export const unstable_Profiling = enableProfiling ? {
   startLoggingProfilingEvents,
   stopLoggingProfilingEvents

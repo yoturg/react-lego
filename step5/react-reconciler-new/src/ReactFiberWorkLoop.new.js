@@ -6,7 +6,7 @@
  *
  *      
  */
-import { enableCreateEventHandleAPI, enableProfilerTimer, enableProfilerNestedUpdatePhase, enableProfilerNestedUpdateScheduledHook, deferRenderPhaseUpdateToNextBatch, enableSchedulingProfiler, disableSchedulerTimeoutInWorkLoop, enableUpdaterTracking, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
+import { enableCreateEventHandleAPI, enableProfilerTimer, enableProfilerCommitHooks, enableProfilerNestedUpdatePhase, enableProfilerNestedUpdateScheduledHook, deferRenderPhaseUpdateToNextBatch, enableSchedulingProfiler, disableSchedulerTimeoutInWorkLoop, enableUpdaterTracking, enableCache, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
 import ReactSharedInternals from '../../shared/ReactSharedInternals';
 import is from '../../shared/objectIs';
 import { // Aliased because `act` will override and push to an internal queue
@@ -20,21 +20,22 @@ import { Profiler } from './ReactWorkTags';
 import { LegacyRoot } from './ReactRootTags';
 import { NoFlags, Incomplete, StoreConsistency, HostEffectMask, ForceClientRender, BeforeMutationMask, MutationMask, LayoutMask, PassiveMask } from './ReactFiberFlags';
 import { NoLanes, NoLane, SyncLane, NoTimestamp, claimNextTransitionLane, includesSomeLane, isSubsetOfLanes, mergeLanes, removeLanes, pickArbitraryLane, includesOnlyRetries, includesOnlyTransitions, includesBlockingLane, includesExpiredLane, getNextLanes, markStarvedLanesAsExpired, getLanesToRetrySynchronouslyOnError, getMostRecentEventTime, markRootUpdated, markRootSuspended as markRootSuspended_dontCallThisOneDirectly, markRootPinged, markRootFinished, getHighestPriorityLane, addFiberToLanesMap, movePendingFibersToMemoized, addTransitionToLanesMap, getTransitionsForLanes } from './ReactFiberLane.new';
-import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority, lanesToEventPriority } from './ReactEventPriorities.new';
+import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority, lowerEventPriority, lanesToEventPriority } from './ReactEventPriorities.new';
 import { requestCurrentTransition, NoTransition } from './ReactFiberTransition';
 import { beginWork as originalBeginWork } from './ReactFiberBeginWork.new';
 import { completeWork } from './ReactFiberCompleteWork.new';
 import { unwindWork, unwindInterruptedWork } from './ReactFiberUnwindWork.new';
 import { throwException } from './ReactFiberThrow.new';
-import { commitBeforeMutationEffects, commitLayoutEffects, commitMutationEffects } from './ReactFiberCommitWork.new';
+import { commitBeforeMutationEffects, commitLayoutEffects, commitMutationEffects, commitPassiveEffectDurations, commitPassiveMountEffects, commitPassiveUnmountEffects } from './ReactFiberCommitWork.new';
 import { resetContextDependencies } from './ReactFiberNewContext.new';
 import { resetHooksAfterThrow, ContextOnlyDispatcher } from './ReactFiberHooks.new';
 import { finishQueueingConcurrentUpdates, getConcurrentlyUpdatedLanes } from './ReactFiberConcurrentUpdates.new';
 import { markNestedUpdateScheduled, recordCommitTime, resetNestedUpdateFlag, startProfilerTimer, stopProfilerTimerIfRunningAndRecordDelta, syncNestedUpdateFlag } from './ReactProfilerTimer.new'; // DEV stuff
 
 import { resetCurrentFiber as resetCurrentDebugFiberInDEV, setCurrentFiber as setCurrentDebugFiberInDEV } from './ReactCurrentFiber';
-import { isDevToolsPresent, markCommitStarted, markCommitStopped, markComponentRenderStopped, markComponentSuspended, markComponentErrored, markLayoutEffectsStarted, markLayoutEffectsStopped, markRenderStarted, markRenderYielded, markRenderStopped, onCommitRoot as onCommitRootDevTools } from './ReactFiberDevToolsHook.new';
+import { isDevToolsPresent, markCommitStarted, markCommitStopped, markComponentRenderStopped, markComponentSuspended, markComponentErrored, markLayoutEffectsStarted, markLayoutEffectsStopped, markPassiveEffectsStarted, markPassiveEffectsStopped, markRenderStarted, markRenderYielded, markRenderStopped, onCommitRoot as onCommitRootDevTools, onPostCommitRoot as onPostCommitRootDevTools } from './ReactFiberDevToolsHook.new';
 import { releaseCache } from './ReactFiberCacheComponent.new';
+import { processTransitionCallbacks } from './ReactFiberTracingMarkerComponent.new';
 const ceil = Math.ceil;
 const {
   ReactCurrentDispatcher,
@@ -103,6 +104,7 @@ const FALLBACK_THROTTLE_MS = 500; // The absolute time for when we should start 
 
 const RENDER_TIMEOUT_MS = 500;
 let workInProgressTransitions = null;
+let currentPendingTransitionCallbacks = null;
 
 function resetRenderTimer() {
   workInProgressRootRenderTargetTime = now() + RENDER_TIMEOUT_MS;
@@ -115,7 +117,10 @@ let firstUncaughtError = null; // Only used when enableProfilerNestedUpdateSched
 let rootCommittingMutationOrLayoutEffects = null;
 let rootDoesHavePassiveEffects = false;
 let rootWithPendingPassiveEffects = null;
-let pendingPassiveEffectsLanes = NoLanes; // Use these to prevent an infinite loop of nested updates
+let pendingPassiveEffectsLanes = NoLanes;
+let pendingPassiveProfilerEffects = [];
+let pendingPassiveEffectsRemainingLanes = NoLanes;
+let pendingPassiveTransitions = null; // Use these to prevent an infinite loop of nested updates
 
 const NESTED_UPDATE_LIMIT = 50;
 let nestedUpdateCount = 0;
@@ -584,6 +589,14 @@ function recoverFromConcurrentError(root, errorRetryLanes) {
   }
 
   return exitStatus;
+}
+
+export function queueRecoverableErrors(errors) {
+  if (workInProgressRootRecoverableErrors === null) {
+    workInProgressRootRecoverableErrors = errors;
+  } else {
+    workInProgressRootRecoverableErrors.push.apply(workInProgressRootRecoverableErrors, errors);
+  }
 }
 
 function finishConcurrentRender(root, exitStatus, lanes) {
@@ -1551,6 +1564,121 @@ function releaseRootPooledCache(root, remainingLanes) {
   }
 }
 
+export function flushPassiveEffects() {
+  // Returns whether passive effects were flushed.
+  // TODO: Combine this check with the one in flushPassiveEFfectsImpl. We should
+  // probably just combine the two functions. I believe they were only separate
+  // in the first place because we used to wrap it with
+  // `Scheduler.runWithPriority`, which accepts a function. But now we track the
+  // priority within React itself, so we can mutate the variable directly.
+  if (rootWithPendingPassiveEffects !== null) {
+    // Cache the root since rootWithPendingPassiveEffects is cleared in
+    // flushPassiveEffectsImpl
+    const root = rootWithPendingPassiveEffects; // Cache and clear the remaining lanes flag; it must be reset since this
+    // method can be called from various places, not always from commitRoot
+    // where the remaining lanes are known
+
+    const remainingLanes = pendingPassiveEffectsRemainingLanes;
+    pendingPassiveEffectsRemainingLanes = NoLanes;
+    const renderPriority = lanesToEventPriority(pendingPassiveEffectsLanes);
+    const priority = lowerEventPriority(DefaultEventPriority, renderPriority);
+    const prevTransition = ReactCurrentBatchConfig.transition;
+    const previousPriority = getCurrentUpdatePriority();
+
+    try {
+      ReactCurrentBatchConfig.transition = null;
+      setCurrentUpdatePriority(priority);
+      return flushPassiveEffectsImpl();
+    } finally {
+      setCurrentUpdatePriority(previousPriority);
+      ReactCurrentBatchConfig.transition = prevTransition; // Once passive effects have run for the tree - giving components a
+      // chance to retain cache instances they use - release the pooled
+      // cache at the root (if there is one)
+
+      releaseRootPooledCache(root, remainingLanes);
+    }
+  }
+
+  return false;
+}
+
+function flushPassiveEffectsImpl() {
+  if (rootWithPendingPassiveEffects === null) {
+    return false;
+  } // Cache and clear the transitions flag
+
+
+  const transitions = pendingPassiveTransitions;
+  pendingPassiveTransitions = null;
+  const root = rootWithPendingPassiveEffects;
+  const lanes = pendingPassiveEffectsLanes;
+  rootWithPendingPassiveEffects = null; // TODO: This is sometimes out of sync with rootWithPendingPassiveEffects.
+  // Figure out why and fix it. It's not causing any known issues (probably
+  // because it's only used for profiling), but it's a refactor hazard.
+
+  pendingPassiveEffectsLanes = NoLanes;
+
+  if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
+    throw new Error('Cannot flush passive effects while already rendering.');
+  }
+
+  if (enableSchedulingProfiler) {
+    markPassiveEffectsStarted(lanes);
+  }
+
+  const prevExecutionContext = executionContext;
+  executionContext |= CommitContext;
+  commitPassiveUnmountEffects(root.current);
+  commitPassiveMountEffects(root, root.current, lanes, transitions); // TODO: Move to commitPassiveMountEffects
+
+  if (enableProfilerTimer && enableProfilerCommitHooks) {
+    const profilerEffects = pendingPassiveProfilerEffects;
+    pendingPassiveProfilerEffects = [];
+
+    for (let i = 0; i < profilerEffects.length; i++) {
+      const fiber = profilerEffects[i];
+      commitPassiveEffectDurations(root, fiber);
+    }
+  }
+
+  if (enableSchedulingProfiler) {
+    markPassiveEffectsStopped();
+  }
+
+  executionContext = prevExecutionContext;
+  flushSyncCallbacks();
+
+  if (enableTransitionTracing) {
+    const prevPendingTransitionCallbacks = currentPendingTransitionCallbacks;
+    const prevRootTransitionCallbacks = root.transitionCallbacks;
+
+    if (prevPendingTransitionCallbacks !== null && prevRootTransitionCallbacks !== null) {
+      // TODO(luna) Refactor this code into the Host Config
+      // TODO(luna) The end time here is not necessarily accurate
+      // because passive effects could be called before paint
+      // (synchronously) or after paint (normally). We need
+      // to come up with a way to get the correct end time for both cases.
+      // One solution is in the host config, if the passive effects
+      // have not yet been run, make a call to flush the passive effects
+      // right after paint.
+      const endTime = now();
+      currentPendingTransitionCallbacks = null;
+      scheduleCallback(IdleSchedulerPriority, () => processTransitionCallbacks(prevPendingTransitionCallbacks, endTime, prevRootTransitionCallbacks));
+    }
+  } // TODO: Move to commitPassiveMountEffects
+
+
+  onPostCommitRootDevTools(root);
+
+  if (enableProfilerTimer && enableProfilerCommitHooks) {
+    const stateNode = root.current.stateNode;
+    stateNode.effectDuration = 0;
+    stateNode.passiveEffectDuration = 0;
+  }
+
+  return true;
+}
+
 function prepareToThrowUncaughtError(error) {
   if (!hasUncaughtError) {
     hasUncaughtError = true;
@@ -1586,6 +1714,19 @@ let beginWork;
 beginWork = originalBeginWork;
 
 function warnAboutRenderPhaseUpdatesInDEV(fiber) {}
+
+export function restorePendingUpdaters(root, lanes) {
+  if (enableUpdaterTracking) {
+    if (isDevToolsPresent) {
+      const memoizedUpdaters = root.memoizedUpdaters;
+      memoizedUpdaters.forEach(schedulingFiber => {
+        addFiberToLanesMap(root, schedulingFiber, lanes);
+      }); // This function intentionally does not clear memoized updaters.
+      // Those may still be relevant to the current commit
+      // and a future one (e.g. Suspense).
+    }
+  }
+}
 
 function scheduleCallback(priorityLevel, callback) {
   // In production, always call Scheduler. This function will be stripped out.

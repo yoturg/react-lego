@@ -12,6 +12,15 @@ import { ClassComponent, HostRoot } from './ReactWorkTags';
 import getComponentNameFromFiber from '../../react-reconciler-new/src/getComponentNameFromFiber';
 export const emptyContextObject = {}; // A cursor to the current merged context object on the stack.
 
+function isContextProvider(type) {
+  if (disableLegacyContext) {
+    return false;
+  } else {
+    const childContextTypes = type.childContextTypes;
+    return childContextTypes !== null && childContextTypes !== undefined;
+  }
+}
+
 function processChildContext(fiber, type, parentContext) {
   if (disableLegacyContext) {
     return parentContext;

@@ -128,3 +128,12 @@ function addTrappedEventListener(targetContainer, domEventName, eventSystemFlags
     }
   }
 }
+/**
+ * Return the lowest common ancestor of A and B, or null if they are in
+ * different trees.
+ */
+// We should only use this function for:
+// - EnterLeaveEventPlugin
+// This is because we only process this plugin
+// in the bubble phase, so we need to accumulate two
+// phase event listeners.

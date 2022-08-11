@@ -6,4 +6,4 @@
  */
 'use strict'; // export * from './src/forks/Scheduler';
 
-export { unstable_scheduleCallback, unstable_now } from './src/forks/Scheduler';
+export { unstable_scheduleCallback, unstable_shouldYield, unstable_requestPaint, unstable_now } from './src/forks/Scheduler';

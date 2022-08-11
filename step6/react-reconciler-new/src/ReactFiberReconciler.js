@@ -97,7 +97,8 @@ export function getPublicRootInstance(container) {
     default:
       return containerFiber.child.stateNode;
   }
-}
+} // Increases the priority of thenables when they resolve within this boundary.
+
 export {};
 export {};
 export {};
