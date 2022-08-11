@@ -6,18 +6,9 @@
  *
  *      
  */
-import { enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay } from '../../../shared/ReactFeatureFlags';
-import { isDiscreteEventThatRequiresHydration, queueDiscreteEvent, hasQueuedDiscreteEvents, clearIfContinuousEvent, queueIfContinuousEvent, attemptSynchronousHydration } from './ReactDOMEventReplaying';
-import { getNearestMountedFiber, getContainerFromFiber, getSuspenseInstanceFromFiber } from '../../../react-reconciler-new/src/ReactFiberTreeReflection';
-import { HostRoot, SuspenseComponent } from '../../../react-reconciler-new/src/ReactWorkTags';
-import { IS_CAPTURE_PHASE } from './EventSystemFlags';
-import getEventTarget from './getEventTarget';
-import { getInstanceFromNode, getClosestInstanceFromNode } from '../client/ReactDOMComponentTree';
-import { dispatchEventForPluginEventSystem } from './DOMPluginEventSystem';
 import { getCurrentPriorityLevel as getCurrentSchedulerPriorityLevel, IdlePriority as IdleSchedulerPriority, ImmediatePriority as ImmediateSchedulerPriority, LowPriority as LowSchedulerPriority, NormalPriority as NormalSchedulerPriority, UserBlockingPriority as UserBlockingSchedulerPriority } from '../../../react-reconciler-new/src/Scheduler';
 import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority, IdleEventPriority, getCurrentUpdatePriority, setCurrentUpdatePriority } from '../../../react-reconciler-new/src/ReactEventPriorities';
 import ReactSharedInternals from '../../../shared/ReactSharedInternals';
-import { isRootDehydrated } from '../../../react-reconciler-new/src/ReactFiberShellHydration';
 const {
   ReactCurrentBatchConfig
 } = ReactSharedInternals; // TODO: can we stop exporting these?
@@ -25,15 +16,6 @@ const {
 export let _enabled = true; // This is exported in FB builds for use by legacy FB layer infra.
 // We'd like to remove this but it's not clear if this is safe.
 
-export function setEnabled(enabled) {
-  _enabled = !!enabled;
-}
-export function isEnabled() {
-  return _enabled;
-}
-export function createEventListenerWrapper(targetContainer, domEventName, eventSystemFlags) {
-  return dispatchEvent.bind(null, domEventName, eventSystemFlags, targetContainer);
-}
 export function createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags) {
   const eventPriority = getEventPriority(domEventName);
   let listenerWrapper;
@@ -84,176 +66,9 @@ function dispatchContinuousEvent(domEventName, eventSystemFlags, container, nati
   }
 }
 
-export function dispatchEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
-  if (!_enabled) {
-    return;
-  }
-
-  if (enableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay) {
-    dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent);
-  } else {
-    dispatchEventOriginal(domEventName, eventSystemFlags, targetContainer, nativeEvent);
-  }
-}
-
-function dispatchEventOriginal(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
-  // TODO: replaying capture phase events is currently broken
-  // because we used to do it during top-level native bubble handlers
-  // but now we use different bubble and capture handlers.
-  // In eager mode, we attach capture listeners early, so we need
-  // to filter them out until we fix the logic to handle them correctly.
-  const allowReplay = (eventSystemFlags & IS_CAPTURE_PHASE) === 0;
-
-  if (allowReplay && hasQueuedDiscreteEvents() && isDiscreteEventThatRequiresHydration(domEventName)) {
-    // If we already have a queue of discrete events, and this is another discrete
-    // event, then we can't dispatch it regardless of its target, since they
-    // need to dispatch in order.
-    queueDiscreteEvent(null, // Flags that we're not actually blocked on anything as far as we know.
-    domEventName, eventSystemFlags, targetContainer, nativeEvent);
-    return;
-  }
-
-  const blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
-
-  if (blockedOn === null) {
-    dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
-
-    if (allowReplay) {
-      clearIfContinuousEvent(domEventName, nativeEvent);
-    }
-
-    return;
-  }
-
-  if (allowReplay) {
-    if (isDiscreteEventThatRequiresHydration(domEventName)) {
-      // This this to be replayed later once the target is available.
-      queueDiscreteEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent);
-      return;
-    }
-
-    if (queueIfContinuousEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent)) {
-      return;
-    } // We need to clear only if we didn't queue because
-    // queueing is accumulative.
-
-
-    clearIfContinuousEvent(domEventName, nativeEvent);
-  } // This is not replayable so we'll invoke it but without a target,
-  // in case the event system needs to trace it.
-
-
-  dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, null, targetContainer);
-}
-
-function dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
-  let blockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
-
-  if (blockedOn === null) {
-    dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
-    clearIfContinuousEvent(domEventName, nativeEvent);
-    return;
-  }
-
-  if (queueIfContinuousEvent(blockedOn, domEventName, eventSystemFlags, targetContainer, nativeEvent)) {
-    nativeEvent.stopPropagation();
-    return;
-  } // We need to clear only if we didn't queue because
-  // queueing is accumulative.
-
-
-  clearIfContinuousEvent(domEventName, nativeEvent);
-
-  if (eventSystemFlags & IS_CAPTURE_PHASE && isDiscreteEventThatRequiresHydration(domEventName)) {
-    while (blockedOn !== null) {
-      const fiber = getInstanceFromNode(blockedOn);
-
-      if (fiber !== null) {
-        attemptSynchronousHydration(fiber);
-      }
-
-      const nextBlockedOn = findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent);
-
-      if (nextBlockedOn === null) {
-        dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, return_targetInst, targetContainer);
-      }
-
-      if (nextBlockedOn === blockedOn) {
-        break;
-      }
-
-      blockedOn = nextBlockedOn;
-    }
-
-    if (blockedOn !== null) {
-      nativeEvent.stopPropagation();
-    }
-
-    return;
-  } // This is not replayable so we'll invoke it but without a target,
-  // in case the event system needs to trace it.
-
-
-  dispatchEventForPluginEventSystem(domEventName, eventSystemFlags, nativeEvent, null, targetContainer);
-}
-
 export let return_targetInst = null; // Returns a SuspenseInstance or Container if it's blocked.
 // The return_targetInst field above is conceptually part of the return value.
 
-export function findInstanceBlockingEvent(domEventName, eventSystemFlags, targetContainer, nativeEvent) {
-  // TODO: Warn if _enabled is false.
-  return_targetInst = null;
-  const nativeEventTarget = getEventTarget(nativeEvent);
-  let targetInst = getClosestInstanceFromNode(nativeEventTarget);
-
-  if (targetInst !== null) {
-    const nearestMounted = getNearestMountedFiber(targetInst);
-
-    if (nearestMounted === null) {
-      // This tree has been unmounted already. Dispatch without a target.
-      targetInst = null;
-    } else {
-      const tag = nearestMounted.tag;
-
-      if (tag === SuspenseComponent) {
-        const instance = getSuspenseInstanceFromFiber(nearestMounted);
-
-        if (instance !== null) {
-          // Queue the event to be replayed later. Abort dispatching since we
-          // don't want this event dispatched twice through the event system.
-          // TODO: If this is the first discrete event in the queue. Schedule an increased
-          // priority for this boundary.
-          return instance;
-        } // This shouldn't happen, something went wrong but to avoid blocking
-        // the whole system, dispatch the event without a target.
-        // TODO: Warn.
-
-
-        targetInst = null;
-      } else if (tag === HostRoot) {
-        const root = nearestMounted.stateNode;
-
-        if (isRootDehydrated(root)) {
-          // If this happens during a replay something went wrong and it might block
-          // the whole system.
-          return getContainerFromFiber(nearestMounted);
-        }
-
-        targetInst = null;
-      } else if (nearestMounted !== targetInst) {
-        // If we get an event (ex: img onload) before committing that
-        // component's mount, ignore it for now (that is, treat it as if it was an
-        // event on a non-React tree). We might also consider queueing events and
-        // dispatching them after the mount.
-        targetInst = null;
-      }
-    }
-  }
-
-  return_targetInst = targetInst; // We're not blocked on anything.
-
-  return null;
-}
 export function getEventPriority(domEventName) {
   switch (domEventName) {
     // Used by SimpleEventPlugin:

@@ -111,7 +111,8 @@ function resetRenderTimer() {
 }
 
 let hasUncaughtError = false;
-let firstUncaughtError = null; // Only used when enableProfilerNestedUpdateScheduledHook is true;
+let firstUncaughtError = null; 
+let legacyErrorBoundariesThatAlreadyFailed = null;// Only used when enableProfilerNestedUpdateScheduledHook is true;
 // to track which root is currently committing layout effects.
 
 let rootCommittingMutationOrLayoutEffects = null;
@@ -774,8 +775,6 @@ function isRenderConsistentWithExternalStores(finishedWork) {
     node = node.sibling;
   } // Flow doesn't know this is unreachable, but eslint does
   // eslint-disable-next-line no-unreachable
-
-
   return true;
 }
 

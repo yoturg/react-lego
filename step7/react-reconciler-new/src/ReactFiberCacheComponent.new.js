@@ -7,7 +7,9 @@
  *      
  */
 import { enableCache } from '../../shared/ReactFeatureFlags';
-import { REACT_CONTEXT_TYPE } from '../../shared/ReactSymbols'; // In environments without AbortController (e.g. tests)
+import { REACT_CONTEXT_TYPE } from '../../shared/ReactSymbols';
+import { pushProvider, popProvider } from './ReactFiberNewContext.new';
+import * as Scheduler from '../../scheduler'; // In environments without AbortController (e.g. tests)
 // replace it with a lightweight shim that only has the features we use.
 
 const AbortControllerLocal = enableCache ? typeof AbortController !== 'undefined' ? AbortController : function AbortControllerShim() {
@@ -26,6 +28,10 @@ const AbortControllerLocal = enableCache ? typeof AbortController !== 'undefined
 } : null; // Intentionally not named imports because Rollup would
 // use dynamic dispatch for CommonJS interop named imports.
 
+const {
+  unstable_scheduleCallback: scheduleCallback,
+  unstable_NormalPriority: NormalPriority
+} = Scheduler;
 export const CacheContext = enableCache ? {
   $$typeof: REACT_CONTEXT_TYPE,
   // We don't use Consumer/Provider for Cache components. So we'll cheat.
@@ -60,3 +66,31 @@ export function retainCache(cache) {
 
   cache.refCount++;
 } // Cleanup a cache instance, potentially freeing it if there are no more references
+
+export function releaseCache(cache) {
+  if (!enableCache) {
+    return;
+  }
+
+  cache.refCount--;
+
+  if (cache.refCount === 0) {
+    scheduleCallback(NormalPriority, () => {
+      cache.controller.abort();
+    });
+  }
+}
+export function pushCacheProvider(workInProgress, cache) {
+  if (!enableCache) {
+    return;
+  }
+
+  pushProvider(workInProgress, CacheContext, cache);
+}
+export function popCacheProvider(workInProgress, cache) {
+  if (!enableCache) {
+    return;
+  }
+
+  popProvider(CacheContext, workInProgress);
+}
