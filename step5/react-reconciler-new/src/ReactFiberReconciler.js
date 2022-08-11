@@ -75,7 +75,8 @@ export function updateContainer(element, container, parentComponent, callback) {
 
   return lane;
 }
-export {};
+export {}; // Increases the priority of thenables when they resolve within this boundary.
+
 export {};
 export {};
 export {};

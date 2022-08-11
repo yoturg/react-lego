@@ -12,7 +12,8 @@
 // React which this hook might be in.
 import { enableSchedulingProfiler } from '../../shared/ReactFeatureFlags';
 let injectedProfilingHooks = null;
-export const isDevToolsPresent = typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined';
+export const isDevToolsPresent = typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined'; // Profiler API hooks
+
 export function markRenderScheduled(lane) {
   if (enableSchedulingProfiler) {
     if (injectedProfilingHooks !== null && typeof injectedProfilingHooks.markRenderScheduled === 'function') {
