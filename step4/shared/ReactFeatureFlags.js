@@ -186,16 +186,12 @@ export const enableProfilerNestedUpdatePhase = false; // Adds verbose console lo
 
 export const enableDebugTracing = false; // Track which Fiber(s) schedule render work.
 
-export const enableUpdaterTracking = false; 
-// Only enabled in RN, related to enableComponentStackLocations
-// 仅在 RN 中启用，与 enableComponentStackLocations 相关
+export const enableUpdaterTracking = false; // Only enabled in RN, related to enableComponentStackLocations
 
 export const disableNativeComponentFrames = false;
 export const enableServerContext = __EXPERIMENTAL__; // Internal only.
 
-export const enableGetInspectorDataForInstanceInProduction = false; 
-// Profiler API 接受在计划嵌套更新时调用的函数。 此回调接受计划更新的组件类型（类实例或函数）。
-// Profiler API accepts a function to be called when a nested update is scheduled.
+export const enableGetInspectorDataForInstanceInProduction = false; // Profiler API accepts a function to be called when a nested update is scheduled.
 // This callback accepts the component type (class instance or function) the update is scheduled for.
 
 export const enableProfilerNestedUpdateScheduledHook = false;
