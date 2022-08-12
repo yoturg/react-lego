@@ -8,9 +8,7 @@
  */
 import { get as getInstance } from '../../shared/ReactInstanceMap';
 import { ClassComponent } from './ReactWorkTags';
-import { enableSchedulingProfiler } from '../../shared/ReactFeatureFlags';
 import { findCurrentUnmaskedContext, processChildContext, emptyContextObject, isContextProvider as isLegacyContextProvider } from './ReactFiberContext.new';
-import { markRenderScheduled } from './ReactFiberDevToolsHook.new';
 import { requestEventTime, requestUpdateLane, scheduleUpdateOnFiber } from './ReactFiberWorkLoop.new';
 import { createUpdate, enqueueUpdate, entangleTransitions } from './ReactFiberClassUpdateQueue.new';
 // Might add PROFILE later.
@@ -39,9 +37,7 @@ export function updateContainer(element, container, parentComponent, callback) {
   const eventTime = requestEventTime();
   const lane = requestUpdateLane(current);
 
-  if (enableSchedulingProfiler) {
-    markRenderScheduled(lane);
-  }
+
 
   const context = getContextForSubtree(parentComponent);
 
