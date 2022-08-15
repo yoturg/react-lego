@@ -59,6 +59,10 @@ const RootSuspendedWithDelay = 4;
 const RootCompleted = 5;
 const RootDidNotComplete = 6; // Describes where we are in the React execution stack
 
+export const NoContext =
+/*             */
+0b000;
+
 let executionContext = NoContext; // The root we're working on
 
 let workInProgressRoot = null; // The fiber we're working on
@@ -73,7 +77,7 @@ let workInProgressRootRenderLanes = NoLanes; // Stack that allows components to 
 //
 // Most things in the work loop should deal with workInProgressRootRenderLanes.
 // Most things in begin/complete phases should deal with subtreeRenderLanes.
-
+export let subtreeRenderLanes = NoLanes;
 const subtreeRenderLanesCursor = createCursor(NoLanes); // Whether to root completed, errored, suspended, etc.
 
 let workInProgressRootExitStatus = RootInProgress; // A fatal error, if one is thrown
@@ -834,8 +838,6 @@ function isRenderConsistentWithExternalStores(finishedWork) {
     node = node.sibling;
   } // Flow doesn't know this is unreachable, but eslint does
   // eslint-disable-next-line no-unreachable
-
-
   return true;
 }
 
