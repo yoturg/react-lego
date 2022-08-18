@@ -4,15 +4,24 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- *      
+ *
  */
-import { createRootStrictEffectsByDefault, enableStrictEffects, enableProfilerTimer, enableSyncDefaultUpdates, allowConcurrentByDefault } from '../../shared/ReactFeatureFlags';
-import { NoFlags } from './ReactFiberFlags';
-import { ConcurrentRoot } from './ReactRootTags';
-import { HostRoot } from './ReactWorkTags';
-import { isDevToolsPresent } from './ReactFiberDevToolsHook.new';
-import { NoLanes } from './ReactFiberLane.new';
-import { NoMode, ConcurrentMode, ProfileMode, StrictLegacyMode, StrictEffectsMode, ConcurrentUpdatesByDefaultMode } from './ReactTypeOfMode';
+import {
+  enableProfilerTimer,
+  enableSyncDefaultUpdates,
+  allowConcurrentByDefault,
+} from '../../shared/ReactFeatureFlags';
+import {NoFlags} from './ReactFiberFlags';
+import {ConcurrentRoot} from './ReactRootTags';
+import {HostRoot} from './ReactWorkTags';
+import {isDevToolsPresent} from './ReactFiberDevToolsHook.new';
+import {NoLanes} from './ReactFiberLane.new';
+import {
+  NoMode,
+  ConcurrentMode,
+  ProfileMode,
+  ConcurrentUpdatesByDefaultMode,
+} from './ReactTypeOfMode';
 
 function FiberNode(tag, pendingProps, key, mode) {
   // Instance
@@ -80,32 +89,27 @@ function FiberNode(tag, pendingProps, key, mode) {
 // 5) It should be easy to port this to a C struct and keep a C implementation
 //    compatible.
 
-
 const createFiber = function (tag, pendingProps, key, mode) {
   // $FlowFixMe: the shapes are exact here but Flow doesn't like constructors
   return new FiberNode(tag, pendingProps, key, mode);
 };
 
-export function createHostRootFiber(tag, isStrictMode, concurrentUpdatesByDefaultOverride) {
+export function createHostRootFiber(
+  tag,
+  isStrictMode,
+  concurrentUpdatesByDefaultOverride
+) {
   let mode;
 
   if (tag === ConcurrentRoot) {
     mode = ConcurrentMode;
 
-    if (isStrictMode === true) {
-      mode |= StrictLegacyMode;
-
-      if (enableStrictEffects) {
-        mode |= StrictEffectsMode;
-      }
-    } else if (enableStrictEffects && createRootStrictEffectsByDefault) {
-      mode |= StrictLegacyMode | StrictEffectsMode;
-    }
-
-    if ( // We only use this flag for our repo tests to check both behaviors.
-    // TODO: Flip this flag and rename it something like "forceConcurrentByDefaultForTesting"
-    !enableSyncDefaultUpdates || // Only for internal experiments.
-    allowConcurrentByDefault && concurrentUpdatesByDefaultOverride) {
+    if (
+      // We only use this flag for our repo tests to check both behaviors.
+      // TODO: Flip this flag and rename it something like "forceConcurrentByDefaultForTesting"
+      !enableSyncDefaultUpdates || // Only for internal experiments.
+      (allowConcurrentByDefault && concurrentUpdatesByDefaultOverride)
+    ) {
       mode |= ConcurrentUpdatesByDefaultMode;
     }
   } else {

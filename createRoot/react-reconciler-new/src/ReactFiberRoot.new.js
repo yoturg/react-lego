@@ -4,16 +4,35 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- *      
+ *
  */
-import { noTimeout, supportsHydration } from './ReactFiberHostConfig';
-import { createHostRootFiber } from './ReactFiber.new';
-import { NoLane, NoLanes, NoTimestamp, TotalLanes, createLaneMap } from './ReactFiberLane.new';
-import { enableSuspenseCallback, enableCache, enableProfilerCommitHooks, enableProfilerTimer, enableUpdaterTracking, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
-import { initializeUpdateQueue } from './ReactFiberClassUpdateQueue.new';
-import { createCache, retainCache } from './ReactFiberCacheComponent.new';
+import {noTimeout, supportsHydration} from './ReactFiberHostConfig';
+import {createHostRootFiber} from './ReactFiber.new';
+import {
+  NoLane,
+  NoLanes,
+  NoTimestamp,
+  TotalLanes,
+  createLaneMap,
+} from './ReactFiberLane.new';
+import {
+  enableSuspenseCallback,
+  enableCache,
+  enableProfilerCommitHooks,
+  enableProfilerTimer,
+  enableUpdaterTracking,
+  enableTransitionTracing,
+} from '../../shared/ReactFeatureFlags';
+import {initializeUpdateQueue} from './ReactFiberClassUpdateQueue.new';
+import {createCache, retainCache} from './ReactFiberCacheComponent.new';
 
-function FiberRootNode(containerInfo, tag, hydrate, identifierPrefix, onRecoverableError) {
+function FiberRootNode(
+  containerInfo,
+  tag,
+  hydrate,
+  identifierPrefix,
+  onRecoverableError
+) {
   this.tag = tag;
   this.containerInfo = containerInfo;
   this.pendingChildren = null;
@@ -54,7 +73,7 @@ function FiberRootNode(containerInfo, tag, hydrate, identifierPrefix, onRecovera
 
   if (enableTransitionTracing) {
     this.transitionCallbacks = null;
-    const transitionLanesMap = this.transitionLanes = [];
+    const transitionLanesMap = (this.transitionLanes = []);
 
     for (let i = 0; i < TotalLanes; i++) {
       transitionLanesMap.push(null);
@@ -70,7 +89,7 @@ function FiberRootNode(containerInfo, tag, hydrate, identifierPrefix, onRecovera
 
   if (enableUpdaterTracking) {
     this.memoizedUpdaters = new Set();
-    const pendingUpdatersLaneMap = this.pendingUpdatersLaneMap = [];
+    const pendingUpdatersLaneMap = (this.pendingUpdatersLaneMap = []);
 
     for (let i = 0; i < TotalLanes; i++) {
       pendingUpdatersLaneMap.push(new Set());
@@ -78,12 +97,28 @@ function FiberRootNode(containerInfo, tag, hydrate, identifierPrefix, onRecovera
   }
 }
 
-export function createFiberRoot(containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, isStrictMode, concurrentUpdatesByDefaultOverride, // TODO: We have several of these arguments that are conceptually part of the
-// host config, but because they are passed in at runtime, we have to thread
-// them through the root constructor. Perhaps we should put them all into a
-// single type, like a DynamicHostConfig that is defined by the renderer.
-identifierPrefix, onRecoverableError, transitionCallbacks) {
-  const root = new FiberRootNode(containerInfo, tag, hydrate, identifierPrefix, onRecoverableError);
+export function createFiberRoot(
+  containerInfo,
+  tag,
+  hydrate,
+  initialChildren,
+  hydrationCallbacks,
+  isStrictMode,
+  concurrentUpdatesByDefaultOverride, // TODO: We have several of these arguments that are conceptually part of the
+  // host config, but because they are passed in at runtime, we have to thread
+  // them through the root constructor. Perhaps we should put them all into a
+  // single type, like a DynamicHostConfig that is defined by the renderer.
+  identifierPrefix,
+  onRecoverableError,
+  transitionCallbacks
+) {
+  const root = new FiberRootNode(
+    containerInfo,
+    tag,
+    hydrate,
+    identifierPrefix,
+    onRecoverableError
+  );
 
   if (enableSuspenseCallback) {
     root.hydrationCallbacks = hydrationCallbacks;
@@ -94,8 +129,11 @@ identifierPrefix, onRecoverableError, transitionCallbacks) {
   } // Cyclic construction. This cheats the type system right now because
   // stateNode is any.
 
-
-  const uninitializedFiber = createHostRootFiber(tag, isStrictMode, concurrentUpdatesByDefaultOverride);
+  const uninitializedFiber = createHostRootFiber(
+    tag,
+    isStrictMode,
+    concurrentUpdatesByDefaultOverride
+  );
   root.current = uninitializedFiber;
   uninitializedFiber.stateNode = root;
 
@@ -114,15 +152,14 @@ identifierPrefix, onRecoverableError, transitionCallbacks) {
     const initialState = {
       element: initialChildren,
       isDehydrated: hydrate,
-      cache: initialCache
+      cache: initialCache,
     };
     uninitializedFiber.memoizedState = initialState;
   } else {
     const initialState = {
       element: initialChildren,
       isDehydrated: hydrate,
-      cache: null // not enabled yet
-
+      cache: null, // not enabled yet
     };
     uninitializedFiber.memoizedState = initialState;
   }
