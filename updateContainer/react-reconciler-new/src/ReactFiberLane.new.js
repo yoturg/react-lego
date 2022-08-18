@@ -4,91 +4,132 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- *      
+ *
  */
 // TODO: Ideally these types would be opaque but that doesn't work well with
 // our reconciler fork infra, since these leak into non-reconciler packages.
-import { enableUpdaterTracking, allowConcurrentByDefault, enableTransitionTracing } from '../../shared/ReactFeatureFlags';
-import { isDevToolsPresent } from './ReactFiberDevToolsHook.new';
-import { ConcurrentUpdatesByDefaultMode, NoMode } from './ReactTypeOfMode';
-import { clz32 } from './clz32'; // Lane values below should be kept in sync with getLabelForLane(), used by react-devtools-timeline.
+import {
+  enableUpdaterTracking,
+  allowConcurrentByDefault,
+  enableTransitionTracing,
+} from '../../shared/ReactFeatureFlags';
+import {isDevToolsPresent} from './ReactFiberDevToolsHook.new';
+import {ConcurrentUpdatesByDefaultMode, NoMode} from './ReactTypeOfMode';
+import {clz32} from './clz32'; // Lane values below should be kept in sync with getLabelForLane(), used by react-devtools-timeline.
 // If those values are changed that package should be rebuilt and redeployed.
-
+export const TotalLanes = 31;
+export const NoLanes =
+  /*                        */
+  0b0000000000000000000000000000000;
+export const NoLane =
+  /*                          */
+  0b0000000000000000000000000000000;
+export const SyncLane =
+  /*                        */
+  0b0000000000000000000000000000001;
+export const InputContinuousHydrationLane =
+  /*    */
+  0b0000000000000000000000000000010;
+export const InputContinuousLane =
+  /*             */
+  0b0000000000000000000000000000100;
+export const DefaultHydrationLane =
+  /*            */
+  0b0000000000000000000000000001000;
+export const DefaultLane =
+  /*                     */
+  0b0000000000000000000000000010000;
 const TransitionHydrationLane =
-/*                */
-0b0000000000000000000000000100000;
+  /*                */
+  0b0000000000000000000000000100000;
 const TransitionLanes =
-/*                       */
-0b0000000001111111111111111000000;
+  /*                       */
+  0b0000000001111111111111111000000;
 const TransitionLane1 =
-/*                        */
-0b0000000000000000000000001000000;
+  /*                        */
+  0b0000000000000000000000001000000;
 const TransitionLane2 =
-/*                        */
-0b0000000000000000000000010000000;
+  /*                        */
+  0b0000000000000000000000010000000;
 const TransitionLane3 =
-/*                        */
-0b0000000000000000000000100000000;
+  /*                        */
+  0b0000000000000000000000100000000;
 const TransitionLane4 =
-/*                        */
-0b0000000000000000000001000000000;
+  /*                        */
+  0b0000000000000000000001000000000;
 const TransitionLane5 =
-/*                        */
-0b0000000000000000000010000000000;
+  /*                        */
+  0b0000000000000000000010000000000;
 const TransitionLane6 =
-/*                        */
-0b0000000000000000000100000000000;
+  /*                        */
+  0b0000000000000000000100000000000;
 const TransitionLane7 =
-/*                        */
-0b0000000000000000001000000000000;
+  /*                        */
+  0b0000000000000000001000000000000;
 const TransitionLane8 =
-/*                        */
-0b0000000000000000010000000000000;
+  /*                        */
+  0b0000000000000000010000000000000;
 const TransitionLane9 =
-/*                        */
-0b0000000000000000100000000000000;
+  /*                        */
+  0b0000000000000000100000000000000;
 const TransitionLane10 =
-/*                       */
-0b0000000000000001000000000000000;
+  /*                       */
+  0b0000000000000001000000000000000;
 const TransitionLane11 =
-/*                       */
-0b0000000000000010000000000000000;
+  /*                       */
+  0b0000000000000010000000000000000;
 const TransitionLane12 =
-/*                       */
-0b0000000000000100000000000000000;
+  /*                       */
+  0b0000000000000100000000000000000;
 const TransitionLane13 =
-/*                       */
-0b0000000000001000000000000000000;
+  /*                       */
+  0b0000000000001000000000000000000;
 const TransitionLane14 =
-/*                       */
-0b0000000000010000000000000000000;
+  /*                       */
+  0b0000000000010000000000000000000;
 const TransitionLane15 =
-/*                       */
-0b0000000000100000000000000000000;
+  /*                       */
+  0b0000000000100000000000000000000;
 const TransitionLane16 =
-/*                       */
-0b0000000001000000000000000000000;
+  /*                       */
+  0b0000000001000000000000000000000;
 const RetryLanes =
-/*                            */
-0b0000111110000000000000000000000;
+  /*                            */
+  0b0000111110000000000000000000000;
 const RetryLane1 =
-/*                             */
-0b0000000010000000000000000000000;
+  /*                             */
+  0b0000000010000000000000000000000;
 const RetryLane2 =
-/*                             */
-0b0000000100000000000000000000000;
+  /*                             */
+  0b0000000100000000000000000000000;
 const RetryLane3 =
-/*                             */
-0b0000001000000000000000000000000;
+  /*                             */
+  0b0000001000000000000000000000000;
 const RetryLane4 =
-/*                             */
-0b0000010000000000000000000000000;
+  /*                             */
+  0b0000010000000000000000000000000;
 const RetryLane5 =
-/*                             */
-0b0000100000000000000000000000000;
+  /*                             */
+  0b0000100000000000000000000000000;
+export const SomeRetryLane = RetryLane1;
+export const SelectiveHydrationLane =
+  /*          */
+  0b0001000000000000000000000000000;
 const NonIdleLanes =
-/*                          */
-0b0001111111111111111111111111111;
+  /*                          */
+  0b0001111111111111111111111111111;
+export const IdleHydrationLane =
+  /*               */
+  0b0010000000000000000000000000000;
+export const IdleLane =
+  /*                        */
+  0b0100000000000000000000000000000;
+export const OffscreenLane =
+  /*                   */
+  0b1000000000000000000000000000000; // This function is used for the experimental timeline (react-devtools-timeline)
+// It should be kept in sync with the Lanes values above.
+
+export const NoTimestamp = -1;
 let nextTransitionLane = TransitionLane1;
 let nextRetryLane = RetryLane1;
 
@@ -203,25 +244,33 @@ export function getNextLanes(root, wipLanes) {
   // it and we'll lose our progress. We should only do this if the new lanes are
   // higher priority.
 
-
-  if (wipLanes !== NoLanes && wipLanes !== nextLanes && // If we already suspended with a delay, then interrupting is fine. Don't
-  // bother waiting until the root is complete.
-  (wipLanes & suspendedLanes) === NoLanes) {
+  if (
+    wipLanes !== NoLanes &&
+    wipLanes !== nextLanes && // If we already suspended with a delay, then interrupting is fine. Don't
+    // bother waiting until the root is complete.
+    (wipLanes & suspendedLanes) === NoLanes
+  ) {
     const nextLane = getHighestPriorityLane(nextLanes);
     const wipLane = getHighestPriorityLane(wipLanes);
 
-    if ( // Tests whether the next lane is equal or lower priority than the wip
-    // one. This works because the bits decrease in priority as you go left.
-    nextLane >= wipLane || // Default priority updates should not interrupt transition updates. The
-    // only difference between default updates and transition updates is that
-    // default updates do not support refresh transitions.
-    nextLane === DefaultLane && (wipLane & TransitionLanes) !== NoLanes) {
+    if (
+      // Tests whether the next lane is equal or lower priority than the wip
+      // one. This works because the bits decrease in priority as you go left.
+      nextLane >= wipLane || // Default priority updates should not interrupt transition updates. The
+      // only difference between default updates and transition updates is that
+      // default updates do not support refresh transitions.
+      (nextLane === DefaultLane && (wipLane & TransitionLanes) !== NoLanes)
+    ) {
       // Keep working on the existing in-progress tree. Do not interrupt.
       return wipLanes;
     }
   }
 
-  if (allowConcurrentByDefault && (root.current.mode & ConcurrentUpdatesByDefaultMode) !== NoMode) {// Do nothing, use the lanes as they were assigned.
+  if (
+    allowConcurrentByDefault &&
+    (root.current.mode & ConcurrentUpdatesByDefaultMode) !== NoMode
+  ) {
+    // Do nothing, use the lanes as they were assigned.
   } else if ((nextLanes & InputContinuousLane) !== NoLanes) {
     // When updates are sync by default, we entangle continuous priority updates
     // and default updates, so they render in the same batch. The only reason
@@ -250,7 +299,6 @@ export function getNextLanes(root, wipLanes) {
   // For those exceptions where entanglement is semantically important, like
   // useMutableSource, we should ensure that there is no partial work at the
   // time we apply the entanglement.
-
 
   const entangledLanes = root.entangledLanes;
 
@@ -370,7 +418,10 @@ export function markStarvedLanesAsExpired(root, currentTime) {
       // Found a pending lane with no expiration time. If it's not suspended, or
       // if it's pinged, assume it's CPU-bound. Compute a new expiration time
       // using the current time.
-      if ((lane & suspendedLanes) === NoLanes || (lane & pingedLanes) !== NoLanes) {
+      if (
+        (lane & suspendedLanes) === NoLanes ||
+        (lane & pingedLanes) !== NoLanes
+      ) {
         // Assumes timestamps are monotonically increasing.
         expirationTimes[index] = computeExpirationTime(lane, currentTime);
       }
@@ -410,12 +461,19 @@ export function includesOnlyTransitions(lanes) {
   return (lanes & TransitionLanes) === lanes;
 }
 export function includesBlockingLane(root, lanes) {
-  if (allowConcurrentByDefault && (root.current.mode & ConcurrentUpdatesByDefaultMode) !== NoMode) {
+  if (
+    allowConcurrentByDefault &&
+    (root.current.mode & ConcurrentUpdatesByDefaultMode) !== NoMode
+  ) {
     // Concurrent updates by default always use time slicing.
     return false;
   }
 
-  const SyncDefaultLanes = InputContinuousHydrationLane | InputContinuousLane | DefaultHydrationLane | DefaultLane;
+  const SyncDefaultLanes =
+    InputContinuousHydrationLane |
+    InputContinuousLane |
+    DefaultHydrationLane |
+    DefaultLane;
   return (lanes & SyncDefaultLanes) !== NoLanes;
 }
 export function includesExpiredLane(root, lanes) {
@@ -581,7 +639,7 @@ export function markRootEntangled(root, entangledLanes) {
   // If this is hard to grasp, it might help to intentionally break this
   // function and look at the tests that fail in ReactTransition-test.js. Try
   // commenting out one of the conditions below.
-  const rootEntangledLanes = root.entangledLanes |= entangledLanes;
+  const rootEntangledLanes = (root.entangledLanes |= entangledLanes);
   const entanglements = root.entanglements;
   let lanes = rootEntangledLanes;
 
@@ -589,9 +647,11 @@ export function markRootEntangled(root, entangledLanes) {
     const index = pickArbitraryLaneIndex(lanes);
     const lane = 1 << index;
 
-    if ( // Is this one of the newly entangled lanes?
-    lane & entangledLanes | // Is this lane transitively entangled with the newly entangled lanes?
-    entanglements[index] & entangledLanes) {
+    if (
+      // Is this one of the newly entangled lanes?
+      (lane & entangledLanes) | // Is this lane transitively entangled with the newly entangled lanes?
+      (entanglements[index] & entangledLanes)
+    ) {
       entanglements[index] |= entangledLanes;
     }
 
@@ -648,7 +708,7 @@ export function movePendingFibersToMemoized(root, lanes) {
     const updaters = pendingUpdatersLaneMap[index];
 
     if (updaters.size > 0) {
-      updaters.forEach(fiber => {
+      updaters.forEach((fiber) => {
         const alternate = fiber.alternate;
 
         if (alternate === null || !memoizedUpdaters.has(alternate)) {
@@ -688,7 +748,7 @@ export function getTransitionsForLanes(root, lanes) {
     const transitions = root.transitionLanes[index];
 
     if (transitions !== null) {
-      transitions.forEach(transition => {
+      transitions.forEach((transition) => {
         transitionsForLanes.push(transition);
       });
     }
