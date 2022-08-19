@@ -13,9 +13,6 @@ import { findCurrentUnmaskedContext, processChildContext, emptyContextObject, is
 import { markRenderScheduled } from './ReactFiberDevToolsHook.new';
 import { requestEventTime, requestUpdateLane, scheduleUpdateOnFiber } from './ReactFiberWorkLoop.new';
 import { createUpdate, enqueueUpdate, entangleTransitions } from './ReactFiberClassUpdateQueue.new';
-export {} from './ReactMutableSource.new';
-export {} from './ReactPortal';
-export {} from './ReactTestSelectors'; // 0 is PROD, 1 is DEV.
 // Might add PROFILE later.
 
 function getContextForSubtree(parentComponent) {
@@ -75,8 +72,3 @@ export function updateContainer(element, container, parentComponent, callback) {
 
   return lane;
 }
-export {}; // Increases the priority of thenables when they resolve within this boundary.
-
-export {};
-export {};
-export {};

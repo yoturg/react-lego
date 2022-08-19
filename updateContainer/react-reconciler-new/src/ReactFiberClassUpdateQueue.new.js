@@ -122,7 +122,8 @@ export function enqueueUpdate(fiber, update, lane) {
       pending.next = update;
     }
 
-    sharedQueue.pending = update; // Update the childLanes even though we're most likely already rendering
+    sharedQueue.pending = update; 
+    // Update the childLanes even though we're most likely already rendering
     // this fiber. This is for backwards compatibility in the case where you
     // update a different component during render phase than the one that is
     // currently renderings (a pattern that is accompanied by a warning).

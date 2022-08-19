@@ -544,15 +544,16 @@ export function intersectLanes(a, b) {
 // updates) to a group of lanes (used for flushing work).
 
 export function markRootUpdated(root, updateLane, eventTime) {
-  root.pendingLanes |= updateLane; // If there are any suspended transitions, it's possible this new update
+  root.pendingLanes |= updateLane; 
+  // If there are any suspended transitions, it's possible this new update
   // could unblock them. Clear the suspended lanes so that we can try rendering
   // them again.
-  //
+  
   // TODO: We really only need to unsuspend only lanes that are in the
   // `subtreeLanes` of the updated fiber, or the update lanes of the return
   // path. This would exclude suspended updates in an unrelated sibling tree,
   // since there's no way for this update to unblock it.
-  //
+  
   // We don't do this if the incoming update is idle, because we never process
   // idle updates until after all the regular updates have finished; there's no
   // way it could unblock a transition.

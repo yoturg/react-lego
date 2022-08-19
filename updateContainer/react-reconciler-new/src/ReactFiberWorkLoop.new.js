@@ -410,8 +410,9 @@ export function scheduleUpdateOnFiber(root, fiber, lane, eventTime) {
     // hook updates, which are handled differently and don't reach this
     // function), but there are some internal React features that use this as
     // an implementation detail, like selective hydration.
-    warnAboutRenderPhaseUpdatesInDEV(fiber); // Track lanes that were updated during the render phase
+    warnAboutRenderPhaseUpdatesInDEV(fiber); 
 
+    // Track lanes that were updated during the render phase
     workInProgressRootRenderPhaseUpdatedLanes = mergeLanes(
       workInProgressRootRenderPhaseUpdatedLanes,
       lane
@@ -523,10 +524,12 @@ export function isUnsafeClassRenderPhaseUpdate(fiber) {
 // exiting a task.
 
 function ensureRootIsScheduled(root, currentTime) {
-  const existingCallbackNode = root.callbackNode; // Check if any lanes are being starved by other work. If so, mark them as
+  const existingCallbackNode = root.callbackNode; 
+  
+  // Check if any lanes are being starved by other work. If so, mark them as
   // expired so we know to work on those next.
-
-  markStarvedLanesAsExpired(root, currentTime); // Determine the next lanes to work on, and their priority.
+  markStarvedLanesAsExpired(root, currentTime); 
+  // Determine the next lanes to work on, and their priority.
 
   const nextLanes = getNextLanes(
     root,
@@ -542,10 +545,11 @@ function ensureRootIsScheduled(root, currentTime) {
     root.callbackNode = null;
     root.callbackPriority = NoLane;
     return;
-  } // We use the highest priority lane to represent the priority of the callback.
+  }
+  // We use the highest priority lane to represent the priority of the callback.
+  const newCallbackPriority = getHighestPriorityLane(nextLanes); 
 
-  const newCallbackPriority = getHighestPriorityLane(nextLanes); // Check if there's an existing task. We may be able to reuse it.
-
+  // Check if there's an existing task. We may be able to reuse it.
   const existingCallbackPriority = root.callbackPriority;
 
   if (existingCallbackPriority === newCallbackPriority) {
@@ -624,7 +628,8 @@ function ensureRootIsScheduled(root, currentTime) {
 
   root.callbackPriority = newCallbackPriority;
   root.callbackNode = newCallbackNode;
-} // This is the entry point for every concurrent task, i.e. anything that
+} 
+// This is the entry point for every concurrent task, i.e. anything that
 // goes through Scheduler.
 
 function performConcurrentWorkOnRoot(root, didTimeout) {
@@ -1142,9 +1147,9 @@ function prepareFreshStack(root, lanes) {
   const rootWorkInProgress = createWorkInProgress(root.current, null);
   workInProgress = rootWorkInProgress;
 
-  // eslint-disable-next-line
   workInProgressRootRenderLanes =
-    subtreeRenderLanes =
+  subtreeRenderLanes =
+    // eslint-disable-next-line
     workInProgressRootIncludedLanes =
       lanes;
   workInProgressRootExitStatus = RootInProgress;
@@ -1320,9 +1325,10 @@ export function renderHasNotSuspendedYet() {
 function renderRootSync(root, lanes) {
   const prevExecutionContext = executionContext;
   executionContext |= RenderContext;
-  const prevDispatcher = pushDispatcher(); // If the root or lanes have changed, throw out the existing stack
-  // and prepare a fresh one. Otherwise we'll continue where we left off.
+  const prevDispatcher = pushDispatcher(); 
 
+  // If the root or lanes have changed, throw out the existing stack
+  // and prepare a fresh one. Otherwise we'll continue where we left off.
   if (workInProgressRoot !== root || workInProgressRootRenderLanes !== lanes) {
     if (enableUpdaterTracking) {
       if (isDevToolsPresent) {
@@ -1379,7 +1385,6 @@ function renderRootSync(root, lanes) {
 } // The work loop is an extremely hot path. Tell Closure not to inline it.
 
 /** @noinline */
-
 function workLoopSync() {
   // Already timed out, so perform work without checking if we need to yield.
   while (workInProgress !== null) {
@@ -1499,8 +1504,8 @@ function completeUnitOfWork(unitOfWork) {
     // nothing should rely on this, but relying on it here means that we don't
     // need an additional field on the work in progress.
     const current = completedWork.alternate;
-    const returnFiber = completedWork.return; // Check if the work completed or if something threw.
-
+    const returnFiber = completedWork.return; 
+    // Check if the work completed or if something threw.
     if ((completedWork.flags & Incomplete) === NoFlags) {
       setCurrentDebugFiberInDEV(completedWork);
       let next;
@@ -1512,7 +1517,8 @@ function completeUnitOfWork(unitOfWork) {
         next = completeWork(current, completedWork, subtreeRenderLanes);
       } else {
         startProfilerTimer(completedWork);
-        next = completeWork(current, completedWork, subtreeRenderLanes); // Update render duration assuming we didn't error.
+        next = completeWork(current, completedWork, subtreeRenderLanes); 
+        // Update render duration assuming we didn't error.
 
         stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
       }
@@ -1528,7 +1534,8 @@ function completeUnitOfWork(unitOfWork) {
       // This fiber did not complete because something threw. Pop values off
       // the stack without entering the complete phase. If this is a boundary,
       // capture values if possible.
-      const next = unwindWork(current, completedWork, subtreeRenderLanes); // Because this fiber did not complete, don't reset its lanes.
+      const next = unwindWork(current, completedWork, subtreeRenderLanes); 
+      // Because this fiber did not complete, don't reset its lanes.
 
       if (next !== null) {
         // If completing this work spawned new work, do that next. We'll come
